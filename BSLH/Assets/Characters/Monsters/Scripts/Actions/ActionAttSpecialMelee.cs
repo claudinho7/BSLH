@@ -5,13 +5,11 @@ using UnityEngine;
 
 namespace Characters.Monsters.Scripts.Actions
 {
-    public class ActionMoveInMelee : ActionBase
+    public class ActionAttSpecialMelee : ActionBase
     {
         private List<System.Type> _supportedGoals = new(new[] { typeof(GoalAttackFromMelee) });
         
         private float _cost;
-        private bool _isActive;
-
 
         public override List<System.Type> GetSupportedGoals()
         {
@@ -26,29 +24,25 @@ namespace Characters.Monsters.Scripts.Actions
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
-            _isActive = true;
-            Movement.MoveInMelee();
-            Debug.Log("Moving to player");
+            StartCoroutine(WaitForSpecialMelee());
+            Debug.Log("Special Melee");
         }
-
+        
         public override void OnDeactivated()
         {
             base.OnDeactivated();
-            _isActive = false;
-            Movement.ResetIsMoving();
-            Debug.Log("Finished moving to player");
+            Debug.Log("Special Melee Over");
         }
 
         public override void OnTick()
         {
-            _cost = Movement.isInMelee ? 5f : 1f;
-            
-            //if this action is active and player too far move again
-            if (_isActive && Movement.playerSeen && Movement.distanceToPlayer > 11f || Movement.distanceToPlayer <4f)
+            // do this if in melee and 5sec has passed since last used
+            _cost = SpecialMeleeUsed switch
             {
-                Movement.ResetIsMoving();
-                Movement.MoveInMelee();
-            }
+                true => 5f,
+                false when Movement.isInMelee => 1f,
+                _ => 5f
+            };
         }
     }
 }

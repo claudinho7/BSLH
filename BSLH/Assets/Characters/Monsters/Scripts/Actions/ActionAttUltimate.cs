@@ -5,13 +5,11 @@ using UnityEngine;
 
 namespace Characters.Monsters.Scripts.Actions
 {
-    public class ActionMoveInMelee : ActionBase
+    public class ActionAttUltimate : ActionBase
     {
-        private List<System.Type> _supportedGoals = new(new[] { typeof(GoalAttackFromMelee) });
+        private List<System.Type> _supportedGoals = new(new[] { typeof(GoalAttackFromRanged), typeof(GoalAttackFromMelee) });
         
         private float _cost;
-        private bool _isActive;
-
 
         public override List<System.Type> GetSupportedGoals()
         {
@@ -26,28 +24,30 @@ namespace Characters.Monsters.Scripts.Actions
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
-            _isActive = true;
-            Movement.MoveInMelee();
-            Debug.Log("Moving to player");
+            StartCoroutine(WaitForUltimate());
+            Debug.Log("Ultimate");
         }
-
+        
         public override void OnDeactivated()
         {
             base.OnDeactivated();
-            _isActive = false;
-            Movement.ResetIsMoving();
-            Debug.Log("Finished moving to player");
+            Debug.Log("Ultimate Over");
         }
 
         public override void OnTick()
         {
-            _cost = Movement.isInMelee ? 5f : 1f;
-            
-            //if this action is active and player too far move again
-            if (_isActive && Movement.playerSeen && Movement.distanceToPlayer > 11f || Movement.distanceToPlayer <4f)
+            // do this every 10sec if health lower than 70
+            if (UltimateUsed)
             {
-                Movement.ResetIsMoving();
-                Movement.MoveInMelee();
+                _cost = 5f;
+            } 
+            else if (!UltimateUsed && Damage.health <= 70f && Movement.canHitMelee)
+            {
+                _cost = 0f;
+            }
+            else
+            {
+                _cost = 5f;
             }
         }
     }

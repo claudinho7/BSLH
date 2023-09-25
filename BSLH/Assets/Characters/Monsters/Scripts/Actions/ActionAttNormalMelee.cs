@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using Characters.Monsters.Scripts.Goals;
 using Characters.Monsters.Scripts.GOAP_Main;
+using UnityEngine;
 
 namespace Characters.Monsters.Scripts.Actions
 {
-    public class ActionPatrol : ActionBase
+    public class ActionAttNormalMelee : ActionBase
     {
-        private List<System.Type> _supportedGoals = new(new[] { typeof(GoalPatrol) });
+        private List<System.Type> _supportedGoals = new(new[] { typeof(GoalAttackFromMelee) });
+        
+        private float _cost;
 
         public override List<System.Type> GetSupportedGoals()
         {
@@ -15,26 +18,25 @@ namespace Characters.Monsters.Scripts.Actions
 
         public override float Cost()
         {
-            return 0f;
+            return _cost;
         }
         
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
-            Movement.StartPatrolling();
+            
+            Debug.Log("Swipe Attack");
         }
-
+        
         public override void OnDeactivated()
         {
-            Movement.ResetPatrolling();
+            base.OnDeactivated();
+            Debug.Log("Swipe Attack Over");
         }
 
         public override void OnTick()
         {
-            if (!Movement.playerSeen)
-            {
-                OnActivated(LinkedGoals);
-            }
+            _cost = Movement.isInMelee ? 2f : 5f;
         }
     }
 }

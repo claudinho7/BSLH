@@ -1,7 +1,6 @@
-using Characters.Monsters.Scripts.Actions;
 using UnityEngine;
 
-namespace Characters.Monsters.Scripts.Goals
+namespace Characters.Monsters.Scripts.GOAP_Main
 {
     public interface IGoal
     {
@@ -15,12 +14,14 @@ namespace Characters.Monsters.Scripts.Goals
     public class GoalBase : MonoBehaviour, IGoal
     {
         protected MonsterMovement Movement;
+        protected MonsterDamage Damage;
         protected GOAPUI.GOAPUI DebugUI;
         protected ActionBase LinkedAction;
         
         private void Awake()
         {
             Movement = GetComponent<MonsterMovement>();
+            Damage = GetComponent<MonsterDamage>();
         }
 
         private void Start()

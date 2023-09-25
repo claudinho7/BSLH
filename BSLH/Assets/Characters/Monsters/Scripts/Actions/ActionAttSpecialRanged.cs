@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace Characters.Monsters.Scripts.Actions
 {
-    public class ActionMoveInRanged : ActionBase
+    public class ActionAttSpecialRanged : ActionBase
     {
         private List<System.Type> _supportedGoals = new(new[] { typeof(GoalAttackFromRanged) });
-
+        
         private float _cost;
-        private bool _isActive;
 
         public override List<System.Type> GetSupportedGoals()
         {
@@ -25,34 +24,25 @@ namespace Characters.Monsters.Scripts.Actions
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
-            _isActive = true;
-            Movement.MoveInRanged();
-            Debug.Log("Moving in range");
+            StartCoroutine(WaitForSpecialRanged());
+            Debug.Log("Special Ranged");
         }
-
+        
         public override void OnDeactivated()
         {
             base.OnDeactivated();
-            _isActive = false;
-            Movement.ResetIsMoving();
-            Debug.Log("Finished moving in ranged");
+            Debug.Log("Special Ranged Over");
         }
 
         public override void OnTick()
         {
-            _cost = Movement.distanceToPlayer switch
+            // do this if in perfect range and 5sec has passed since last used
+            _cost = SpecialRangedUsed switch
             {
-                //increase  cost with distance
-                > 11f => 1f,
-                > 8f and <= 11f => 5f,
-                >= 5f and <= 8f => 4f,
-                _ => 1f
+                true => 5f,
+                false when Movement.isInRanged => 1f,
+                _ => 5f
             };
-
-            //if this action is active and player too far move again
-            if (!_isActive || !(Movement.distanceToPlayer > 11f)) return;
-            Movement.ResetIsMoving();
-            Movement.MoveInRanged();
         }
     }
 }
