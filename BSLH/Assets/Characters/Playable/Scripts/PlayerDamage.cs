@@ -9,25 +9,27 @@ namespace Characters.Playable.Scripts
     {
         public enum DamageType { Slashing, Piercing, Blunt }
         public enum ArmorType { Light, Medium, Heavy }
-        public enum ConditionType { Poison, Decay, Blind, Bleed, Stagger }
+        public enum ConditionType { None, Poison, Decay, Blind, Bleed, Stagger, PushBack }
     }
 
     public class PlayerDamage : MonoBehaviour, IDamageStats
     {
         //health
-        public float maxHealth = 100;
+        public float maxHealth = 100f;
         private float _currentHealth;
-        private float _totalDamageTaken;
+        private float _totalDamageTaken; // used to calculate flat damage taken
 
         //stats
         public IDamageStats.DamageType damageType; //this damage type
         public IDamageStats.ArmorType armorType; //this armor type
         public IDamageStats.ConditionType conditionType; //this condition type
-        public float baseDamage;
-        public float conditionDamage;
-        public float conditionTime;
-        
-        
+        public float baseDamage; //weapons flat damage before modifiers
+        public float conditionDamage; //damage over time value
+        public float conditionTime; //damage over time duration
+        public bool hasCondition; //check if damage over time is applied
+        public float skillModifier = 1f; // to be added depending on the type of skill used
+
+
         //gear stuff
         public GameObject activeWeapon; //equipped weapon
         private GameObject _previousActiveWeapon;
@@ -46,6 +48,7 @@ namespace Characters.Playable.Scripts
             _equippedWeaponName = activeWeapon.name;
             _equippedArmorName = activeArmor.name;
             SwitchGear(); //trigger gear update on start
+            conditionType = IDamageStats.ConditionType.None; //set condition to none
         }
 
         private void Update()
@@ -124,6 +127,10 @@ namespace Characters.Playable.Scripts
                 case IDamageStats.ConditionType.Stagger:
                     StartCoroutine(Stagger(duration));
                     break;
+                case IDamageStats.ConditionType.PushBack: 
+                    PushBack();
+                    break;
+                case IDamageStats.ConditionType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
             }
@@ -179,7 +186,12 @@ namespace Characters.Playable.Scripts
             };
         }
         #endregion
-        
+
+        private void PushBack()
+        {
+            //add pushback
+            Debug.Log("pushed back");
+        }
         private void ApplyDecay(float damage)
         {
             maxHealth -= damage;
@@ -233,6 +245,7 @@ namespace Characters.Playable.Scripts
             }
         }
 
+        //switch gear
         private void SwitchGear()
         {
             switch (_equippedWeaponName)
@@ -276,27 +289,144 @@ namespace Characters.Playable.Scripts
             };
         }
 
-        
+
+        //Skills
+        #region Skills
+        //The skill modifier gets applied to the base damage on collision
         public void DoNormalAttack()
         {
-            
+            skillModifier = 1f; // to be added depending on the type of skill used
+            hasCondition = false;
         }
 
         public void DoHeavyAttack()
         {
-            
+            //modifiers change depending on weapon
+            hasCondition = false;
+            skillModifier = _equippedWeaponName switch
+            {
+                "Sword" => 4f,
+                "Spear" => 3f,
+                "Hammer" => 6f,
+                "GreatSword" => 5f,
+                "Daggers" => 2f,
+                "Crossbow" => 3f,
+                "Bow" => 2f,
+                _ => skillModifier
+            };
         }
 
         public void DoSkill1()
         {
-            
+            //modifiers change depending on weapon
+            switch (_equippedWeaponName)
+            {
+                case "Sword":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 3;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+                case "Spear":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 5;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+                case "Hammer":
+                    skillModifier = 4f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.Stagger;
+                    break;
+                case "GreatSword":
+                    skillModifier = 4f;
+                    hasCondition = true;
+                    conditionDamage = 5;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+                case "Daggers":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 3;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+                case "Crossbow":
+                    skillModifier = 5f;
+                    hasCondition = true;
+                    conditionDamage = 5;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+                case "Bow":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 2;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    break;
+            }
         }
 
         public void DoSkill2()
         {
-            
+            //modifiers change depending on weapon
+            switch (_equippedWeaponName)
+            {
+                case "Sword":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.Stagger;
+                    break;
+                case "Spear":
+                    skillModifier = 4f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.PushBack;
+                    break;
+                case "Hammer":
+                    skillModifier = 5f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.PushBack;
+                    break;
+                case "GreatSword":
+                    skillModifier = 3f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.Stagger;
+                    break;
+                case "Daggers":
+                    skillModifier = 5f;
+                    hasCondition = false;
+                    break;
+                case "Crossbow":
+                    skillModifier = 5f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.PushBack;
+                    break;
+                case "Bow":
+                    skillModifier = 5f;
+                    hasCondition = false;
+                    break;
+            }
         }
+        #endregion
 
+        
+        //look for collision and receive damage
         private void OnCollisionEnter(Collision collision)
         {
             // Check if the collision is with a monster.
@@ -306,8 +436,12 @@ namespace Characters.Playable.Scripts
 
             if (damageScript == null) return;
             // Calculate and apply the damage.
-            CalculateTotalDamageReceived(damageScript.baseDamage, damageScript.damageType);
+            CalculateTotalDamageReceived(damageScript.baseDamage + damageScript.skillModifier, damageScript.damageType);
+
+            //if the skill used by enemy has a condition add it and make it false
+            if (!damageScript.hasCondition) return;
             ApplyCondition(damageScript.conditionDamage, damageScript.conditionTime, damageScript.conditionType);
+            damageScript.hasCondition = false;
         }
     }
 }
