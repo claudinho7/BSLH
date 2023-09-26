@@ -1,30 +1,74 @@
 using System;
 using System.Collections;
-using Characters.Playable.Scripts;
+using Characters.Monsters.Scripts;
 using UnityEngine;
 
-namespace Characters.Monsters.Scripts
+namespace Characters.Playable.Scripts
 {
-    public class MonsterDamage : MonoBehaviour, IDamageStats
+    public interface IDamageStats
+    {
+        public enum DamageType { Slashing, Piercing, Blunt }
+        public enum ArmorType { Light, Medium, Heavy }
+        public enum ConditionType { Poison, Decay, Blind, Bleed, Stagger }
+    }
+
+    public class PlayerDamage : MonoBehaviour, IDamageStats
     {
         //health
         public float maxHealth = 100;
         private float _currentHealth;
         private float _totalDamageTaken;
-        
+
         //stats
-        public IDamageStats.DamageType damageType; //this condition type
-        public IDamageStats.ArmorType armorType; //this condition type
+        public IDamageStats.DamageType damageType; //this damage type
+        public IDamageStats.ArmorType armorType; //this armor type
         public IDamageStats.ConditionType conditionType; //this condition type
         public float baseDamage;
         public float conditionDamage;
         public float conditionTime;
         
-        private void Awake()
+        
+        //gear stuff
+        public GameObject activeWeapon; //equipped weapon
+        private GameObject _previousActiveWeapon;
+        public GameObject activeArmor; //equipped armor
+        private GameObject _previousActiveArmor;
+        private string _equippedWeaponName;
+        private string _equippedArmorName;
+
+        private void Start()
         {
             _currentHealth = maxHealth;
+
+            // Initialize the Gear variable at the start.
+            _previousActiveWeapon = activeWeapon;
+            _previousActiveArmor = activeArmor;
+            _equippedWeaponName = activeWeapon.name;
+            _equippedArmorName = activeArmor.name;
+            SwitchGear(); //trigger gear update on start
         }
 
+        private void Update()
+        { 
+            // Check if there is an equipped weapon.
+            if (activeWeapon != null || activeArmor != null)
+            {
+                // Get the name of the equipped GameObject.
+                _equippedWeaponName = activeWeapon.name;
+                _equippedArmorName = activeArmor.name;
+
+                // Check if the active Gear GameObject has changed.
+                if (_previousActiveWeapon != activeWeapon || _previousActiveArmor != activeArmor)
+                {
+                    SwitchGear();
+                    // Update the previous Gear variable.
+                    _previousActiveWeapon = activeWeapon;
+                    _previousActiveArmor = activeArmor;
+                }
+            }
+        }
+
+        //this receives the damage
         private void TakeDamage(float damage)
         {
             // Subtract the calculated damage from the current health.
@@ -37,8 +81,9 @@ namespace Characters.Monsters.Scripts
                 Destroy(gameObject);
             }
         }
-        
-        public float CalculateTotalDamageReceived(float baseDamageReceived, IDamageStats.DamageType damageTypeReceived)
+
+        //this calculates the hit damage
+        private void CalculateTotalDamageReceived(float baseDamageReceived, IDamageStats.DamageType damageTypeReceived)
         {
             // Get defined damage multipliers.
             var slashingMultiplier = GetSlashingMultiplier();
@@ -56,10 +101,11 @@ namespace Characters.Monsters.Scripts
                 _ => 0f
             };
 
-            return _totalDamageTaken;
+            TakeDamage(_totalDamageTaken);
         }
 
-        public void ApplyCondition(float damage, float duration, IDamageStats.ConditionType condition)
+        //this gets the over time damage and conditions
+        private void ApplyCondition(float damage, float duration, IDamageStats.ConditionType condition)
         {
             switch (condition)
             {
@@ -186,13 +232,77 @@ namespace Characters.Monsters.Scripts
                 elapsedTime += 2;
             }
         }
+
+        private void SwitchGear()
+        {
+            switch (_equippedWeaponName)
+            {
+                case "Sword":
+                    baseDamage = 10f;
+                    damageType = IDamageStats.DamageType.Slashing;
+                    break;
+                case "Spear":
+                    baseDamage = 8f;
+                    damageType = IDamageStats.DamageType.Piercing;
+                    break;
+                case "Hammer":
+                    baseDamage = 17f;
+                    damageType = IDamageStats.DamageType.Blunt;
+                    break;
+                case "GreatSword":
+                    baseDamage = 14f;
+                    damageType = IDamageStats.DamageType.Slashing;
+                    break;
+                case "Daggers":
+                    baseDamage = 8f;
+                    damageType = IDamageStats.DamageType.Slashing;
+                    break;
+                case "Crossbow":
+                    baseDamage = 7f;
+                    damageType = IDamageStats.DamageType.Piercing;
+                    break;
+                case "Bow":
+                    baseDamage = 5f;
+                    damageType = IDamageStats.DamageType.Piercing;
+                    break;
+            }
+
+            armorType = _equippedArmorName switch
+            {
+                "Light" => IDamageStats.ArmorType.Light,
+                "Medium" => IDamageStats.ArmorType.Medium,
+                "Heavy" => IDamageStats.ArmorType.Heavy,
+                _ => armorType
+            };
+        }
+
         
+        public void DoNormalAttack()
+        {
+            
+        }
+
+        public void DoHeavyAttack()
+        {
+            
+        }
+
+        public void DoSkill1()
+        {
+            
+        }
+
+        public void DoSkill2()
+        {
+            
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
-            // Check if the collision is with a player.
-            if (!collision.gameObject.CompareTag("Player")) return;
+            // Check if the collision is with a monster.
+            if (!collision.gameObject.CompareTag("Monster")) return;
             // Access the damage script on the colliding object.
-            var damageScript = collision.gameObject.GetComponent<PlayerDamage>();
+            var damageScript = collision.gameObject.GetComponent<MonsterDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.

@@ -12,7 +12,7 @@ namespace Characters.Monsters.Scripts.Goals
         public override void OnTickGoal()
         {
             // Cache the values
-            float cachedHealth = Damage.health;
+            float cachedHealth = Damage.maxHealth;
             var cachedDistanceToPlayer = Movement.distanceToPlayer;
 
             // Health Weight

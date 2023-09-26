@@ -869,7 +869,7 @@ GameObject:
   - component: {fileID: 907854470}
   m_Layer: 0
   m_Name: AI
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1128,7 +1128,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb5291b947f27f45bc375647bfd82d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
+  maxHealth: 100
+  damageType: 0
+  armorType: 1
+  baseDamage: 10
 --- !u!114 &907854468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1245,6 +1248,7 @@ GameObject:
   - component: {fileID: 1823280001}
   - component: {fileID: 1823280000}
   - component: {fileID: 1823279999}
+  - component: {fileID: 1823280003}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -1340,6 +1344,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1823280003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823279998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3b0384ebef48046955218e8b9a8ab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  damageType: 0
+  armorType: 0
+  baseDamage: 0
+  activeWeapon: {fileID: 8515031886387348296, guid: c3e6f2c3cc2d5f04fa977d1864692d7b,
+    type: 3}
+  activeArmor: {fileID: 2405537235705897406, guid: 891f9ca958a38304c9156b900935368b,
+    type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -41,7 +41,7 @@ namespace Characters.Monsters.Scripts.Actions
             {
                 _cost = 5f;
             } 
-            else if (!UltimateUsed && Damage.health <= 70f && Movement.canHitMelee)
+            else if (!UltimateUsed && Damage.maxHealth <= 70f && Movement.canHitMelee)
             {
                 _cost = 0f;
             }
