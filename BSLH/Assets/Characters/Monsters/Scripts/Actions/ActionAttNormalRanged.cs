@@ -25,6 +25,8 @@ namespace Characters.Monsters.Scripts.Actions
         {
             base.OnActivated(linkedGoal);
             
+            Damage.DoNormalRangedAttack();
+            
             Debug.Log("Shooting my bow");
         }
 

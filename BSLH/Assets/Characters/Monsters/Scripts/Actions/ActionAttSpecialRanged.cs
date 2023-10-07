@@ -24,6 +24,9 @@ namespace Characters.Monsters.Scripts.Actions
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
+            
+            Damage.DoSpecialRangedAttack();
+            
             StartCoroutine(WaitForSpecialRanged());
             Debug.Log("Special Ranged");
         }

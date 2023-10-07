@@ -58,14 +58,14 @@ namespace Characters.Monsters.Scripts.GOAP_Main
         protected IEnumerator WaitForSpecialRanged()
         {
             SpecialRangedUsed = true;
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(8.0f);
             SpecialRangedUsed = false;
         }
         
         protected IEnumerator WaitForUltimate()
         {
             UltimateUsed = true;
-            yield return new WaitForSeconds(10.0f);
+            yield return new WaitForSeconds(15.0f);
             UltimateUsed = false;
         }
     }

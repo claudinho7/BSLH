@@ -25,6 +25,8 @@ namespace Characters.Monsters.Scripts.Actions
         {
             base.OnActivated(linkedGoal);
             
+            Damage.DoNormalMeleeAttack();
+            
             Debug.Log("Swipe Attack");
         }
         

@@ -14,9 +14,11 @@ namespace Characters.Playable.Scripts
 
     public class PlayerDamage : MonoBehaviour, IDamageStats
     {
+        public GameObject[] weapons; //store game objects to enable weapon collisions
+        
         //health
         public float maxHealth = 100f;
-        private float _currentHealth;
+        public float currentHealth;
         private float _totalDamageTaken; // used to calculate flat damage taken
 
         //stats
@@ -37,10 +39,12 @@ namespace Characters.Playable.Scripts
         private GameObject _previousActiveArmor;
         private string _equippedWeaponName;
         private string _equippedArmorName;
+        
+        public bool testCollider;
 
         private void Start()
         {
-            _currentHealth = maxHealth;
+            currentHealth = maxHealth;
 
             // Initialize the Gear variable at the start.
             _previousActiveWeapon = activeWeapon;
@@ -49,10 +53,23 @@ namespace Characters.Playable.Scripts
             _equippedArmorName = activeArmor.name;
             SwitchGear(); //trigger gear update on start
             conditionType = IDamageStats.ConditionType.None; //set condition to none
+            
+            //set weapon colliders off for start
+            weapons[0].SetActive(false);
+            weapons[1].SetActive(false);
         }
 
         private void Update()
         { 
+            if (testCollider)
+            {
+                weapons[0].SetActive(true);
+            }
+            else
+            {
+                weapons[0].SetActive(false);
+            }
+            
             // Check if there is an equipped weapon.
             if (activeWeapon != null || activeArmor != null)
             {
@@ -75,10 +92,10 @@ namespace Characters.Playable.Scripts
         private void TakeDamage(float damage)
         {
             // Subtract the calculated damage from the current health.
-            _currentHealth -= damage;
+            currentHealth -= damage;
 
             // Implement any additional logic for handling damage effects, death, etc.
-            if (_currentHealth <= 0f)
+            if (currentHealth <= 0f)
             {
                 // Entity is defeated, you can destroy or disable it, play death animation, etc.
                 Destroy(gameObject);
@@ -427,12 +444,12 @@ namespace Characters.Playable.Scripts
 
         
         //look for collision and receive damage
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
             // Check if the collision is with a monster.
-            if (!collision.gameObject.CompareTag("Monster")) return;
+            if (!other.gameObject.CompareTag("Monster")) return;
             // Access the damage script on the colliding object.
-            var damageScript = collision.gameObject.GetComponent<MonsterDamage>();
+            var damageScript = other.gameObject.GetComponent<MonsterDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.

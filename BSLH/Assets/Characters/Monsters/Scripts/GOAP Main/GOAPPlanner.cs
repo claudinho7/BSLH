@@ -1,5 +1,3 @@
-using Characters.Monsters.Scripts.Actions;
-using Characters.Monsters.Scripts.Goals;
 using UnityEngine;
 
 namespace Characters.Monsters.Scripts.GOAP_Main
@@ -7,97 +5,101 @@ namespace Characters.Monsters.Scripts.GOAP_Main
     // ReSharper disable once InconsistentNaming
     public class GOAPPlanner : MonoBehaviour
     {
-        GoalBase[] Goals;
-    ActionBase[] Actions;
+        private GoalBase[] _goals;
+        private ActionBase[] _actions;
+        private GoalBase _activeGoal;
+        private ActionBase _activeAction;
+        
+        private void Awake() 
+        { 
+            _goals = GetComponents<GoalBase>(); 
+            _actions = GetComponents<ActionBase>();
+        }
+        
 
-    GoalBase ActiveGoal;
-    ActionBase ActiveAction;
-
-    void Awake()
-    {
-        Goals = GetComponents<GoalBase>();
-        Actions = GetComponents<ActionBase>();
-    }
-
-    void Update()
-    {
-        GoalBase bestGoal = null;
-        ActionBase bestAction = null;
-
-        // find the highest priority goal that can be activated
-        foreach(var goal in Goals)
+        public void DoGoap()
         {
-            // first tick the goal
-            goal.OnTickGoal();
+            GoalBase bestGoal = null; 
+            ActionBase bestAction = null;
 
-            // can it run?
-            if (!goal.CanRun())
-                continue;
-
-            // is it a worse priority?
-            if (!(bestGoal == null || goal.CalculatePriority() > bestGoal.CalculatePriority()))
-                continue;
-
-            // find the best cost action
-            ActionBase candidateAction = null;
-            foreach(var action in Actions)
-            {
-                if (!action.GetSupportedGoals().Contains(goal.GetType()))
+            // find the highest priority goal that can be activated
+            foreach(var goal in _goals)
+            { 
+                // first tick the goal
+                goal.OnTickGoal();
+                
+                // can it run?
+                if (!goal.CanRun()) 
                     continue;
 
-                // found a suitable action
-                if (candidateAction == null || action.Cost() < candidateAction.Cost())
-                    candidateAction = action;
+                // is it a worse priority?
+                if (!(bestGoal == null || goal.CalculatePriority() > bestGoal.CalculatePriority())) 
+                    continue;
+
+                // find the best cost action
+                ActionBase candidateAction = null; 
+                foreach(var action in _actions) 
+                { 
+                    if (!action.GetSupportedGoals().Contains(goal.GetType())) 
+                        continue;
+
+                    // found a suitable action
+                    if (candidateAction == null || action.Cost() < candidateAction.Cost()) 
+                        candidateAction = action; 
+                }
+
+                // did we find an action?
+                if (candidateAction != null) 
+                { 
+                    bestGoal = goal; 
+                    bestAction = candidateAction; 
+                } 
             }
 
-            // did we find an action?
-            if (candidateAction != null)
-            {
-                bestGoal = goal;
-                bestAction = candidateAction;
-            }
-        }
-
-        // if no current goal
-        if (ActiveGoal == null)
-        {
-            ActiveGoal = bestGoal;
-            ActiveAction = bestAction;
-
-            if (ActiveGoal != null)
-                ActiveGoal.OnGoalActivated(ActiveAction);
-            if (ActiveAction != null)
-                ActiveAction.OnActivated(ActiveGoal);            
-        } // no change in goal?
-        else if (ActiveGoal == bestGoal)
-        {
-            // action changed?
-            if (ActiveAction != bestAction)
-            {
-                ActiveAction.OnDeactivated();
+            // if no current goal
+            if (_activeGoal == null) 
+            { 
+                _activeGoal = bestGoal; 
+                _activeAction = bestAction;
                 
-                ActiveAction = bestAction;
-
-                ActiveAction.OnActivated(ActiveGoal);
+                if (_activeGoal != null) 
+                    _activeGoal.OnGoalActivated(_activeAction); 
+                if (_activeAction != null) 
+                    _activeAction.OnActivated(_activeGoal); 
+            } // no change in goal?
+            else if (_activeGoal == bestGoal) 
+            {
+                // action changed?
+                if (_activeAction != bestAction) 
+                { 
+                    _activeAction.OnDeactivated();
+                    
+                    _activeAction = bestAction;
+                    
+                    if (_activeAction != null) _activeAction.OnActivated(_activeGoal); 
+                } //same action? repeat
+                else if (_activeAction == bestAction)
+                {
+                    if (_activeAction != null) _activeAction.OnActivated(_activeGoal);
+                }
+            } // new goal or no valid goal
+            else if (_activeGoal != bestGoal) 
+            { 
+                _activeGoal.OnGoalDeactivated(); 
+                _activeAction.OnDeactivated();
+                
+                _activeGoal = bestGoal; 
+                _activeAction = bestAction;
+                
+                if (_activeGoal != null) 
+                    _activeGoal.OnGoalActivated(_activeAction); 
+                if (_activeAction != null) 
+                    _activeAction.OnActivated(_activeGoal); 
             }
-        } // new goal or no valid goal
-        else if (ActiveGoal != bestGoal)
-        {
-            ActiveGoal.OnGoalDeactivated();
-            ActiveAction.OnDeactivated();
 
-            ActiveGoal = bestGoal;
-            ActiveAction = bestAction;
-
-            if (ActiveGoal != null)
-                ActiveGoal.OnGoalActivated(ActiveAction);
-            if (ActiveAction != null)
-                ActiveAction.OnActivated(ActiveGoal);
+            // tick the action
+            if (_activeAction != null) 
+                _activeAction.OnTick();
         }
-
-        // tick the action
-        if (ActiveAction != null)
-            ActiveAction.OnTick();
-    }
     }
 }

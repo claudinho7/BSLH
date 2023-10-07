@@ -24,6 +24,9 @@ namespace Characters.Monsters.Scripts.Actions
         public override void OnActivated(GoalBase linkedGoal)
         {
             base.OnActivated(linkedGoal);
+            
+            Damage.DoUltimateAttack();
+            
             StartCoroutine(WaitForUltimate());
             Debug.Log("Ultimate");
         }

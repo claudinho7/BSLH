@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace Characters.Monsters.Scripts
 { 
     public class MonsterMovement : MonoBehaviour
     {
-        public NavMeshAgent agent;
+        private NavMeshAgent _agent;
         public Transform playerTransform; // Reference to the player's Transform component
+        private Animator _animator;
 
         //for random patrol
         private const float PatrolRange = 15f;
@@ -23,17 +26,26 @@ namespace Characters.Monsters.Scripts
         public float distanceToPlayer;
 
         private bool _isMoving;
+        
+        //animation cache
+        private static readonly int Speed = Animator.StringToHash("Speed");
 
 
+        private void Awake()
+        {
+            _agent = GetComponent<NavMeshAgent>();
+            _animator = GetComponent<Animator>();
+        }
 
         private void Start()
         {
-            agent = GetComponent<NavMeshAgent>();
             _centerPoint = this.transform;
         }
 
         private void Update()
         {
+            _animator.SetFloat(Speed, _agent.velocity.magnitude); //if agent moving -> use walk / speed animation
+
             #region AI Vision
             // Calculate the direction from AI to player
             var position = transform.position;
@@ -102,8 +114,8 @@ namespace Characters.Monsters.Scripts
         public void MoveInMelee()
         {
             if (_isMoving) return;
-            agent.stoppingDistance = 3f;
-            agent.SetDestination(playerTransform.position);
+            _agent.stoppingDistance = 2f;
+            _agent.SetDestination(playerTransform.position);
             //Debug.Log("Moving To Player");
             _isMoving = true;
         }
@@ -111,7 +123,7 @@ namespace Characters.Monsters.Scripts
         public void MoveInRanged()
         {
             if (_isMoving) return;
-            agent.stoppingDistance = 1f;
+            _agent.stoppingDistance = 1f;
             // Calculate the direction from AI to player.
             var position = playerTransform.position;
             var directionToPlayer = transform.position - position;
@@ -119,7 +131,7 @@ namespace Characters.Monsters.Scripts
             // Calculate the destination 10 units away from the player.
             var destination = position + directionToPlayer * 10f;
             // Set the calculated destination for the NavMesh agent.
-            agent.SetDestination(destination);
+            _agent.SetDestination(destination);
             //Debug.Log("Moving To Ranged Position");
             _isMoving = true;
         }
@@ -127,7 +139,7 @@ namespace Characters.Monsters.Scripts
         public void StartPatrolling()
         {
             // Check if patrolling is active.
-            if (!_isPatrolling && agent.remainingDistance <= agent.stoppingDistance)
+            if (!_isPatrolling && _agent.remainingDistance <= _agent.stoppingDistance)
             {
                 Patrol();
             }
@@ -144,7 +156,7 @@ namespace Characters.Monsters.Scripts
         {
             if (!RandomPoint(_centerPoint.position, PatrolRange, out var point)) return;
             Debug.DrawRay(point, Vector3.up, Color.blue, 1f);
-            agent.SetDestination(point);
+            _agent.SetDestination(point);
         }
 
         private static bool RandomPoint(Vector3 center, float range, out Vector3 result)

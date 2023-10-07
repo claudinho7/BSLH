@@ -7,9 +7,12 @@ namespace Characters.Monsters.Scripts
 {
     public class MonsterDamage : MonoBehaviour, IDamageStats
     {
+        private Animator _animator;
+        public GameObject[] weapons; //store game objects to enable weapon collisions
+        
         //health
         public float maxHealth = 100;
-        private float _currentHealth;
+        public float currentHealth;
         private float _totalDamageTaken;
 
         //stats
@@ -24,24 +27,52 @@ namespace Characters.Monsters.Scripts
 
         private string _monsterName;
 
+        public bool testCollider;
         
+        //animation cache
+        private static readonly int Died = Animator.StringToHash("Died");
+        private static readonly int NormalAttMelee = Animator.StringToHash("NormalAttMelee");
+        private static readonly int NormalAttRanged = Animator.StringToHash("NormalAttRanged");
+        private static readonly int SpecialAttMelee = Animator.StringToHash("SpecialAttMelee");
+        private static readonly int SpecialAttRanged = Animator.StringToHash("SpecialAttRanged");
+        private static readonly int UltimateAtt = Animator.StringToHash("UltimateAtt");
+
+
         private void Awake()
         {
-            _currentHealth = maxHealth;
+            _animator = GetComponent<Animator>();
+            currentHealth = maxHealth;
             _monsterName = gameObject.name;
-            conditionType = IDamageStats.ConditionType.None; //set condition to none
+            conditionType = IDamageStats.ConditionType.None; //set condition to none for start
+            
+            //set weapon colliders off for start
+            weapons[0].SetActive(false);
+            weapons[1].SetActive(false);
+        }
+
+        private void Update()
+        {
+            if (testCollider)
+            {
+                weapons[0].SetActive(true);
+            }
+            else
+            {
+                weapons[0].SetActive(false);
+            }
         }
 
         private void TakeDamage(float damage)
         {
             // Subtract the calculated damage from the current health.
-            _currentHealth -= damage;
+            currentHealth -= damage;
 
             // Implement any additional logic for handling damage effects, death, etc.
-            if (_currentHealth <= 0f)
+            if (currentHealth <= 0f)
             {
                 // Entity is defeated, you can destroy or disable it, play death animation, etc.
-                Destroy(gameObject);
+                _animator.SetTrigger(Died);
+                //Destroy(gameObject);
             }
         }
         
@@ -228,12 +259,15 @@ namespace Characters.Monsters.Scripts
         //The skill modifier gets applied to the base damage on collision
         public void DoNormalMeleeAttack()
         {
-            skillModifier = 1f; // to be changed depending on the type of skill used
+            skillModifier = 1f; // use base damage
             hasCondition = false;
+            
+            _animator.SetTrigger(NormalAttMelee);
         }
 
         public void DoNormalRangedAttack()
         {
+            _animator.SetTrigger(NormalAttRanged);
             switch (_monsterName)
             {
                 case "Gorgon": //bow shot
@@ -259,6 +293,7 @@ namespace Characters.Monsters.Scripts
 
         public void DoSpecialMeleeAttack()
         {
+            _animator.SetTrigger(SpecialAttMelee);
             //modifiers change depending on monster type
             switch (_monsterName)
             {
@@ -288,6 +323,7 @@ namespace Characters.Monsters.Scripts
 
         public void DoSpecialRangedAttack()
         {
+            _animator.SetTrigger(SpecialAttRanged);
             //modifiers change depending on monster type
             switch (_monsterName)
             {
@@ -314,6 +350,7 @@ namespace Characters.Monsters.Scripts
         }
         public void DoUltimateAttack()
         {
+            _animator.SetTrigger(UltimateAtt);
             //modifiers change depending on monster type
             switch (_monsterName)
             {
@@ -330,28 +367,30 @@ namespace Characters.Monsters.Scripts
                     conditionDamage = 4;
                     conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
-                    _currentHealth += 20f; //heal for 20 every ultimate
+                    currentHealth += 20f; //heal for 20 every ultimate
                     break;
                 case "Satyr": //heal
                     skillModifier = 1f;
                     hasCondition = false;
-                    _currentHealth += 20f; //heal for 20 every ultimate
+                    currentHealth += 20f; //heal for 20 every ultimate
                     break;
             }
         }
         #endregion
         
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
-            // Check if the collision is with a player.
-            if (!collision.gameObject.CompareTag("Player")) return;
+            // Check the layers of the colliding GameObject and decide whether to process the collision
+            if (other.gameObject.layer != LayerMask.NameToLayer("PlayerWeapon")) return;
+            
             // Access the damage script on the colliding object.
-            var damageScript = collision.gameObject.GetComponent<PlayerDamage>();
+            var damageScript = other.gameObject.GetComponentInParent<PlayerDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.
             CalculateTotalDamageReceived(damageScript.baseDamage + damageScript.skillModifier, damageScript.damageType);
-            
+            Debug.Log("collision detected with" + gameObject.layer);
+
             //if the skill used by enemy has a condition add it and make it false
             if (!damageScript.hasCondition) return;
             ApplyCondition(damageScript.conditionDamage, damageScript.conditionTime, damageScript.conditionType);
