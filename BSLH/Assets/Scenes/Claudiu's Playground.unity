@@ -124,6 +124,7 @@ NavMeshSettings:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!4 &11348706 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 70a15607de11d8849825beef7588fdf8,
@@ -237,6 +238,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 21588267}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+=======
+>>>>>>> parent of 8ef5701 (AI and Damage update)
 =======
 >>>>>>> parent of 8ef5701 (AI and Damage update)
 --- !u!1 &72615069
@@ -1566,6 +1569,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1001 &1203979642
 PrefabInstance:
@@ -3490,6 +3494,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
 =======
 >>>>>>> parent of 8ef5701 (AI and Damage update)
+=======
+>>>>>>> parent of 8ef5701 (AI and Damage update)
 --- !u!1 &1823279998
 GameObject:
   m_ObjectHideFlags: 0
@@ -3618,6 +3624,7 @@ MonoBehaviour:
     type: 3}
   activeArmor: {fileID: 2405537235705897406, guid: 891f9ca958a38304c9156b900935368b,
     type: 3}
+<<<<<<< HEAD
 <<<<<<< HEAD
   testCollider: 0
 --- !u!54 &1823280004
@@ -3880,6 +3887,8 @@ MeshFilter:
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 =======
 >>>>>>> parent of 8ef5701 (AI and Damage update)
+=======
+>>>>>>> parent of 8ef5701 (AI and Damage update)
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3893,7 +3902,10 @@ SceneRoots:
   - {fileID: 772999449}
   - {fileID: 1200914456}
 <<<<<<< HEAD
+<<<<<<< HEAD
   - {fileID: 1203979642}
   - {fileID: 1341628585}
+=======
+>>>>>>> parent of 8ef5701 (AI and Damage update)
 =======
 >>>>>>> parent of 8ef5701 (AI and Damage update)
