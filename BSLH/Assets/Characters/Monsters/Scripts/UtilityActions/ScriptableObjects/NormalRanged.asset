@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc03e4ae615af647b1ef6d8a04f9eeb, type: 3}
+  m_Name: NormalRanged
+  m_EditorClassIdentifier: 
+  actionName: NormalRanged
+  _score: 0
+  considerations:
+  - {fileID: 11400000, guid: fa4b27724b5924d4db79698a625f4e80, type: 2}
+  - {fileID: 11400000, guid: c97fdaa810d6f0341b95d9f6a84feb02, type: 2}
+  - {fileID: 11400000, guid: b689e82416700674981c63026f40b552, type: 2}

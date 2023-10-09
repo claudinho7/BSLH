@@ -25,6 +25,12 @@ namespace Characters.Monsters.Scripts
         private string _monsterName;
 
         
+<<<<<<< Updated upstream
+=======
+        //animation cache
+        private static readonly int Died = Animator.StringToHash("Died");
+
+>>>>>>> Stashed changes
         private void Awake()
         {
             _currentHealth = maxHealth;
@@ -144,7 +150,10 @@ namespace Characters.Monsters.Scripts
             };
         }
         #endregion
-        
+
+        //execute conditions
+        #region Conditions
+
         private void PushBack()
         {
             //add pushback
@@ -222,6 +231,8 @@ namespace Characters.Monsters.Scripts
                 baseDamage = oldBaseDamage;
             }
         }
+
+        #endregion
         
         //Skills
         #region Skills
@@ -312,6 +323,7 @@ namespace Characters.Monsters.Scripts
                     break;
             }
         }
+        
         public void DoUltimateAttack()
         {
             //modifiers change depending on monster type
