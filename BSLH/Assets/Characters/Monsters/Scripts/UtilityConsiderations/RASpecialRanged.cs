@@ -7,10 +7,15 @@ namespace Characters.Monsters.Scripts.UtilityConsiderations
     [CreateAssetMenu(fileName = "RA_SR", menuName = "UtilityConsiderations/RepeatedActionSpecialRanged")]
     public class RaSpecialRanged : Consideration
     {
-        [SerializeField] private AnimationCurve responseCurve;
         public override float ScoreConsideration(AIController aiController)
         {
-            Score = responseCurve.Evaluate(Mathf.Clamp01(aiController.actionCounterSpecialRanged / 2));
+            Score = aiController.actionCounterSpecialRanged switch
+            {
+                0 => 1f,
+                1 => 0.7f,
+                >= 2 => 0f,
+                _ => Score
+            };
             return Score;
         }
     }

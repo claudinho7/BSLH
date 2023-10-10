@@ -11,18 +11,17 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private Animator _animator;
         public MonsterDamage damage;
-        
+
         //animations
         //public bool animationStarted;
         //public bool animationEnded;
-        private float _animationLength;
-        private bool _movementComplete;
         
         //action counters
-        public float actionCounterNormalMelee;
-        public float actionCounterNormalRanged;
-        public float actionCounterSpecialMelee;
-        public float actionCounterSpecialRanged;
+        public int actionCounterNormalMelee;
+        public int actionCounterNormalRanged;
+        public int actionCounterSpecialMelee;
+        public int actionCounterSpecialRanged;
+        public bool canDoUltimate;
         
         //cache animations
         private static readonly int NormalAttMelee = Animator.StringToHash("NormalAttMelee");
@@ -37,6 +36,8 @@ namespace Characters.Monsters.Scripts.UtilityCore
             AIBrain = GetComponent<AIBrain>();
             _animator = GetComponent<Animator>();
             damage = GetComponent<MonsterDamage>();
+            
+            canDoUltimate = true;
         }
 
         private void Update()
@@ -145,32 +146,48 @@ namespace Characters.Monsters.Scripts.UtilityCore
             {
                 // Check the action name and update the corresponding counter
                 case "NormalMelee":
-                    actionCounterNormalMelee += 1f;
-                    actionCounterNormalRanged = 0f;
-                    actionCounterSpecialMelee = 0f;
-                    actionCounterSpecialRanged = 0f;
+                    actionCounterNormalMelee += 1;
+                    actionCounterNormalRanged = 0;
+                    actionCounterSpecialMelee = 0;
+                    actionCounterSpecialRanged = 0;
                     Debug.Log("normal melee counter updated");
                     break;
                 case "NormalRanged":
-                    actionCounterNormalRanged += 1f;
-                    actionCounterNormalMelee = 0f;
-                    actionCounterSpecialMelee = 0f;
-                    actionCounterSpecialRanged = 0f;
+                    actionCounterNormalRanged += 1;
+                    actionCounterNormalMelee = 0;
+                    actionCounterSpecialMelee = 0;
+                    actionCounterSpecialRanged = 0;
                     break;
                 case "SpecialMelee":
-                    actionCounterSpecialMelee += 1f;
-                    actionCounterNormalMelee = 0f;
-                    actionCounterNormalRanged = 0f;
-                    actionCounterSpecialRanged = 0f;
+                    actionCounterSpecialMelee += 1;
+                    actionCounterNormalMelee = 0;
+                    actionCounterNormalRanged = 0;
+                    actionCounterSpecialRanged = 0;
                     Debug.Log("special melee counter updated");
                     break;
                 case "SpecialRanged":
-                    actionCounterSpecialRanged += 1f;
-                    actionCounterNormalMelee = 0f;
-                    actionCounterNormalRanged = 0f;
-                    actionCounterSpecialMelee = 0f;
+                    actionCounterSpecialRanged += 1;
+                    actionCounterNormalMelee = 0;
+                    actionCounterNormalRanged = 0;
+                    actionCounterSpecialMelee = 0;
+                    break;
+                case "Ultimate" :
+                    actionCounterSpecialRanged = 0;
+                    actionCounterNormalMelee = 0;
+                    actionCounterNormalRanged = 0;
+                    actionCounterSpecialMelee = 0;
+                    StartCoroutine(UltimateCooldown());
                     break;
             }
+        }
+
+        private IEnumerator UltimateCooldown()
+        {
+            canDoUltimate = false;
+
+            yield return new WaitForSeconds(15.0f); // Wait for 15 seconds
+
+            canDoUltimate = true;
         }
     }
 }

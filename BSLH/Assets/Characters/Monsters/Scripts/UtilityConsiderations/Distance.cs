@@ -12,7 +12,7 @@ namespace Characters.Monsters.Scripts.UtilityConsiderations
         {
             const float maxDistance = 15f; // Set the maximum distance you want to consider
             var clampedDistance = Mathf.Clamp(aiController.Movement.distanceToPlayer, 0f, maxDistance);
-            Score = responseCurve.Evaluate(clampedDistance / maxDistance);
+            Score = responseCurve.Evaluate(Mathf.Clamp01(clampedDistance / maxDistance));
             return Score;
         }
     }

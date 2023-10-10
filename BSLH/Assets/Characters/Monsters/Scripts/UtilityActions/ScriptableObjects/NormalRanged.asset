@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: NormalRanged
   m_EditorClassIdentifier: 
   actionName: NormalRanged
-  _score: 0
+  _score: 0.30795565
   considerations:
+  - {fileID: 11400000, guid: 94f6699ca393dcf44b4873729a9c69c1, type: 2}
   - {fileID: 11400000, guid: fa4b27724b5924d4db79698a625f4e80, type: 2}
   - {fileID: 11400000, guid: c97fdaa810d6f0341b95d9f6a84feb02, type: 2}
   - {fileID: 11400000, guid: b689e82416700674981c63026f40b552, type: 2}

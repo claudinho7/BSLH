@@ -9,7 +9,7 @@ namespace Characters.Monsters.Scripts
     {
         //health
         public float maxHealth = 100;
-        private float _currentHealth;
+        public float currentHealth;
         private float _totalDamageTaken;
 
         //stats
@@ -21,33 +21,31 @@ namespace Characters.Monsters.Scripts
         public float conditionTime; //damage over time duration
         public bool hasCondition; //check if damage over time is applied
         public float skillModifier = 1f; // to be added depending on the type of skill used
-
-        private string _monsterName;
-
         
-<<<<<<< Updated upstream
-=======
+        private string _monsterName;
+        
         //animation cache
+        private Animator _animator;
         private static readonly int Died = Animator.StringToHash("Died");
-
->>>>>>> Stashed changes
+        
         private void Awake()
         {
-            _currentHealth = maxHealth;
+            currentHealth = maxHealth;
             _monsterName = gameObject.name;
             conditionType = IDamageStats.ConditionType.None; //set condition to none
+            _animator = GetComponent<Animator>();
         }
 
         private void TakeDamage(float damage)
         {
             // Subtract the calculated damage from the current health.
-            _currentHealth -= damage;
+            currentHealth -= damage;
 
             // Implement any additional logic for handling damage effects, death, etc.
-            if (_currentHealth <= 0f)
+            if (currentHealth <= 0f)
             {
                 // Entity is defeated, you can destroy or disable it, play death animation, etc.
-                Destroy(gameObject);
+                _animator.SetTrigger(Died);
             }
         }
         
@@ -342,23 +340,23 @@ namespace Characters.Monsters.Scripts
                     conditionDamage = 4;
                     conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
-                    _currentHealth += 20f; //heal for 20 every ultimate
+                    currentHealth += 20f; //heal for 20 every ultimate
                     break;
                 case "Satyr": //heal
                     skillModifier = 1f;
                     hasCondition = false;
-                    _currentHealth += 20f; //heal for 20 every ultimate
+                    currentHealth += 20f; //heal for 20 every ultimate
                     break;
             }
         }
         #endregion
         
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
-            // Check if the collision is with a player.
-            if (!collision.gameObject.CompareTag("Player")) return;
-            // Access the damage script on the colliding object.
-            var damageScript = collision.gameObject.GetComponent<PlayerDamage>();
+            // Check if the collision is with a player weapon.
+            if (other.gameObject.layer != LayerMask.NameToLayer("PlayerWeapon")) return;
+            // Access the damage script on the colliding object parent.
+            var damageScript = other.gameObject.GetComponentInParent<PlayerDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.

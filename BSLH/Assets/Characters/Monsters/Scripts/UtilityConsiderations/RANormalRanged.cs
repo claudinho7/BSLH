@@ -7,10 +7,16 @@ namespace Characters.Monsters.Scripts.UtilityConsiderations
     [CreateAssetMenu(fileName = "RA_NR", menuName = "UtilityConsiderations/RepeatedActionNormalRanged")]
     public class RaNormalRanged : Consideration
     {
-        [SerializeField] private AnimationCurve responseCurve;
         public override float ScoreConsideration(AIController aiController)
         {
-            Score = responseCurve.Evaluate(Mathf.Clamp01(aiController.actionCounterNormalRanged / 3));
+            Score = aiController.actionCounterNormalRanged switch
+            {
+                0 => 1f,
+                1 => 1f,
+                2 => 0.7f,
+                >= 3 => 0f,
+                _ => Score
+            };
             return Score;
         }
     }

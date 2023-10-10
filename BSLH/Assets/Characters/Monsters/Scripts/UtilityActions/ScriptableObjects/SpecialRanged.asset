@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SpecialRanged
   m_EditorClassIdentifier: 
   actionName: SpecialRanged
-  _score: 0
+  _score: 0.42263442
   considerations:
+  - {fileID: 11400000, guid: 94f6699ca393dcf44b4873729a9c69c1, type: 2}
   - {fileID: 11400000, guid: fa4b27724b5924d4db79698a625f4e80, type: 2}
   - {fileID: 11400000, guid: c97fdaa810d6f0341b95d9f6a84feb02, type: 2}
   - {fileID: 11400000, guid: 5968b26a5a81b394ebf88a9ba0259de0, type: 2}

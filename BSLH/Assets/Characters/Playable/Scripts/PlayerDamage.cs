@@ -16,7 +16,7 @@ namespace Characters.Playable.Scripts
     {
         //health
         public float maxHealth = 100f;
-        private float _currentHealth;
+        public float currentHealth;
         private float _totalDamageTaken; // used to calculate flat damage taken
 
         //stats
@@ -40,7 +40,7 @@ namespace Characters.Playable.Scripts
 
         private void Start()
         {
-            _currentHealth = maxHealth;
+            currentHealth = maxHealth;
 
             // Initialize the Gear variable at the start.
             _previousActiveWeapon = activeWeapon;
@@ -75,13 +75,13 @@ namespace Characters.Playable.Scripts
         private void TakeDamage(float damage)
         {
             // Subtract the calculated damage from the current health.
-            _currentHealth -= damage;
+            currentHealth -= damage;
 
             // Implement any additional logic for handling damage effects, death, etc.
-            if (_currentHealth <= 0f)
+            if (currentHealth <= 0f)
             {
                 // Entity is defeated, you can destroy or disable it, play death animation, etc.
-                Destroy(gameObject);
+                Debug.Log("Player Dead");
             }
         }
 
@@ -187,6 +187,9 @@ namespace Characters.Playable.Scripts
         }
         #endregion
 
+        //Status Effects
+        #region Execute Status Effects
+        
         private void PushBack()
         {
             //add pushback
@@ -244,6 +247,8 @@ namespace Characters.Playable.Scripts
                 elapsedTime += 2;
             }
         }
+        
+        #endregion
 
         //switch gear
         private void SwitchGear()
@@ -427,12 +432,12 @@ namespace Characters.Playable.Scripts
 
         
         //look for collision and receive damage
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
-            // Check if the collision is with a monster.
-            if (!collision.gameObject.CompareTag("Monster")) return;
-            // Access the damage script on the colliding object.
-            var damageScript = collision.gameObject.GetComponent<MonsterDamage>();
+            // Check if the collision is with a monster weapon.
+            if (other.gameObject.layer != LayerMask.NameToLayer("MonsterWeapon")) return;
+            // Access the damage script on the colliding object parent.
+            var damageScript = other.gameObject.GetComponentInParent<MonsterDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.

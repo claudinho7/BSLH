@@ -54932,9 +54932,6 @@ AnimationClip:
     flags: 0
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-<<<<<<< Updated upstream
-  m_Events: []
-=======
   m_Events:
   - time: 0
     functionName: AnimationStarted
@@ -54950,4 +54947,3 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
->>>>>>> Stashed changes
