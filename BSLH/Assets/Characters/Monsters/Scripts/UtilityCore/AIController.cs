@@ -83,6 +83,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
             Debug.Log("Started Normal Melee");
+            Movement.LookAtPlayer();
             _animator.SetTrigger(NormalAttMelee);
             damage.DoNormalMeleeAttack();
         }
@@ -96,6 +97,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
             Debug.Log("Started Normal Ranged");
+            Movement.LookAtPlayer();
             _animator.SetTrigger(NormalAttRanged);
             damage.DoNormalRangedAttack();
         }
@@ -109,6 +111,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
             Debug.Log("Started Special Melee");
+            Movement.LookAtPlayer();
             _animator.SetTrigger(SpecialAttMelee);
             damage.DoSpecialMeleeAttack();
         }
@@ -122,6 +125,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
             Debug.Log("Started Special Ranged");
+            Movement.LookAtPlayer();
             _animator.SetTrigger(SpecialAttRanged);
             damage.DoSpecialRangedAttack();
         }
@@ -135,6 +139,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
             Debug.Log("Started Ultimate");
+            Movement.LookAtPlayer();
             _animator.SetTrigger(UltimateAtt);
             damage.DoUltimateAttack();
         }

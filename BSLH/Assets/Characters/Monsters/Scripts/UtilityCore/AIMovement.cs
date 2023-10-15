@@ -11,6 +11,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         //Vision
         private const float ProximityDistance = 15f;
+        private Vector3 _directionToPlayer;
         public bool canHitMelee;
         public bool canHitRanged;
         public float distanceToPlayer;
@@ -43,14 +44,14 @@ namespace Characters.Monsters.Scripts.UtilityCore
             // Calculate the direction from AI to player
             var position = transform.position;
             var playerPosition = playerTransform.position;
-            var directionToPlayer = playerPosition - position;
+            _directionToPlayer = playerPosition - position;
             distanceToPlayer = Vector3.Distance(position, playerPosition); //set distance to player
 
             // Create a ray from AI's position towards the player
-            var ray = new Ray(position, directionToPlayer);
+            var ray = new Ray(position, _directionToPlayer);
 
             // Draw the ray in the scene view
-            Debug.DrawRay(position, directionToPlayer, Color.red);
+            Debug.DrawRay(position, _directionToPlayer, Color.red);
 
             // Perform the raycast
             if (Physics.Raycast(ray, out var hit, ProximityDistance))
@@ -81,12 +82,20 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 canHitRanged = false;
             }
             #endregion
-            
+
             // Check if patrolling is active.
             if (isPatrolling && _agent.remainingDistance <= _agent.stoppingDistance)
             {
                 Patrol();
             }
+        }
+
+        public void LookAtPlayer()
+        {
+            if (_directionToPlayer == Vector3.zero) return;
+            _directionToPlayer.y = 0f; // Ensure the AI remains level (no tilting)
+            // Set the AI's rotation
+            _agent.transform.forward = _directionToPlayer;
         }
 
         public void MoveInMelee()

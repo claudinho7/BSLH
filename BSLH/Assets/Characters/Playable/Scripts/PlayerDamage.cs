@@ -14,9 +14,11 @@ namespace Characters.Playable.Scripts
 
     public class PlayerDamage : MonoBehaviour, IDamageStats
     {
+        private Animator _animator;
         //health
         public float maxHealth = 100f;
         public float currentHealth;
+        public float stamina = 100f;
         private float _totalDamageTaken; // used to calculate flat damage taken
 
         //stats
@@ -37,11 +39,18 @@ namespace Characters.Playable.Scripts
         private GameObject _previousActiveArmor;
         private string _equippedWeaponName;
         private string _equippedArmorName;
+        
+        //animation cache
+        private static readonly int Died = Animator.StringToHash("Died");
+
+        private void Awake()
+        {
+            _animator = GetComponent<Animator>();
+            currentHealth = maxHealth;
+        }
 
         private void Start()
         {
-            currentHealth = maxHealth;
-
             // Initialize the Gear variable at the start.
             _previousActiveWeapon = activeWeapon;
             _previousActiveArmor = activeArmor;
@@ -78,11 +87,9 @@ namespace Characters.Playable.Scripts
             currentHealth -= damage;
 
             // Implement any additional logic for handling damage effects, death, etc.
-            if (currentHealth <= 0f)
-            {
-                // Entity is defeated, you can destroy or disable it, play death animation, etc.
-                Debug.Log("Player Dead");
-            }
+            if (!(currentHealth <= 0f)) return;
+            _animator.SetTrigger(Died);
+            Debug.Log("Player Dead");
         }
 
         //this calculates the hit damage

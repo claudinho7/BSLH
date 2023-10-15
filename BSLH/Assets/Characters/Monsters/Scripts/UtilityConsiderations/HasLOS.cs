@@ -9,14 +9,7 @@ namespace Characters.Monsters.Scripts.UtilityConsiderations
     {
         public override float ScoreConsideration(AIController aiController)
         {
-            if (aiController.Movement.canHitRanged)
-            {
-                Score = 1f;
-            }
-            else
-            {
-                Score = 0f;
-            }
+            Score = aiController.Movement.canHitRanged ? 1f : 0f;
             return Score;
         }
     }
