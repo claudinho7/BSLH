@@ -9,23 +9,17 @@ namespace Characters.Playable.Scripts
         private CharacterController _controller;
         private Transform _cameraMain;
         private PlayerInput _playerInput;
+        private PlayerDamage _playerDamage;
 
-        private Vector3 _playerVelocity;
+        [SerializeField] private float cameraRotationSpeed = 3f;
         private Vector2 _playerMovement;
+        private Quaternion _playerRotation;
         private bool _groundedPlayer;
-        [SerializeField]private float playerSpeed = 2.0f;
-        [SerializeField]private float sprintSpeed = 1.0f;
-        [SerializeField]private float jumpHeight = 1.0f;
-        [SerializeField]private float gravityValue = -9.81f;
-        [SerializeField] private float rotationSpeed = 4f;
 
-        private bool _isJumping;
         private bool _isSprinting;
         private bool _isBlocking;
 
         //animation cache
-        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
-        private static readonly int IsSprinting = Animator.StringToHash("IsSprinting");
         private static readonly int Jump = Animator.StringToHash("Jump");
         private static readonly int IsBlocking = Animator.StringToHash("IsBlocking");
         private static readonly int Dodge = Animator.StringToHash("Dodge");
@@ -34,57 +28,67 @@ namespace Characters.Playable.Scripts
         private static readonly int Skill1 = Animator.StringToHash("Skill1");
         private static readonly int Skill2 = Animator.StringToHash("Skill2");
         private static readonly int Bandage = Animator.StringToHash("Bandage");
+        private static readonly int Horizontal = Animator.StringToHash("Horizontal");
+        private static readonly int Vertical = Animator.StringToHash("Vertical");
+        private static readonly int CanExecute = Animator.StringToHash("CanExecute");
 
         private void Awake()
         {
             _playerInput = new PlayerInput();
-            
+
+            _playerDamage = GetComponent<PlayerDamage>();
             _animator = GetComponent<Animator>();
             _controller = GetComponent<CharacterController>();
             if (Camera.main != null) _cameraMain = Camera.main.transform;
         }
-        
+
+        private void Start()
+        {
+            _animator.SetBool(CanExecute, true);
+        }
+
         private void Update()
         {
             #region Grounded
             _groundedPlayer = _controller.isGrounded;
-            if (_groundedPlayer && _playerVelocity.y < 0)
-            {
-                _playerVelocity.y = 0f;
-            }
             #endregion
 
-            //movement
-            var move = new Vector3(_playerMovement.x, 0, _playerMovement.y);
-            var cameraTransform = _cameraMain.transform;
-            move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
-            move.y = 0;
-            
-            _controller.Move(move * (Time.deltaTime * (playerSpeed + sprintSpeed)));
-            
-            //jumping
-            if (_isJumping && _groundedPlayer)
+            //movement && sprinting
+            switch (_isSprinting)
             {
-                _playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-                _isJumping = false;
+                case false:
+                    _animator.SetFloat(Horizontal, _playerMovement.x);
+                    _animator.SetFloat(Vertical, _playerMovement.y);
+                    break;
+                case true:
+                    _animator.SetFloat(Horizontal, _playerMovement.x * 2f);
+                    _animator.SetFloat(Vertical, _playerMovement.y * 2f);
+                    break;
             }
-
-            _playerVelocity.y += gravityValue * Time.deltaTime;
-            _controller.Move(_playerVelocity * Time.deltaTime);
-
+            
             //rotation
             if (_playerMovement != Vector2.zero)
             {
-                var targetAngle = Mathf.Atan2(_playerMovement.x, _playerMovement.y) * Mathf.Rad2Deg + _cameraMain.eulerAngles.y;
-                var rotation = Quaternion.Euler(0f, targetAngle, 0f);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+                _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation, Time.deltaTime * cameraRotationSpeed);
             }
 
-            //play move animation when moving
-            _animator.SetBool(IsWalking, move.magnitude > 0.1);
+            //blocking
+            switch (_isBlocking)
+            {
+                case true:
+                    _animator.SetBool(IsBlocking, true);
+                    break;
+                case false:
+                    _animator.SetBool(IsBlocking, false);
+                    break;
+            }
         }
-        
 
+
+        //action triggers
+        #region Action Triggers
+        
         public void PlayerMove(InputAction.CallbackContext context)
         {
             _playerMovement = context.ReadValue<Vector2>();
@@ -92,9 +96,7 @@ namespace Characters.Playable.Scripts
         
         public void DoJump(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
-            Debug.Log("jump performed");
-            _isJumping = true;
+            if (!context.performed || !_groundedPlayer) return;
             _animator.SetTrigger(Jump);
         }
 
@@ -102,89 +104,79 @@ namespace Characters.Playable.Scripts
         {
             if (context.started)
             {
-                Debug.Log("Sprinting");
                 _isSprinting = true;
-                sprintSpeed = 5f;
-                _animator.SetBool(IsSprinting, true);
             } 
             else if (context.canceled)
             {
                 _isSprinting = false;
-                sprintSpeed = 1f;
-                _animator.SetBool(IsSprinting, false);
-
             }
         }
         
-        //blocking needs fixing
         public void PlayerBlocking(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if (context.started)
             {
-                Debug.Log("Blocking");
                 _isBlocking = true;
-                _animator.SetBool(IsBlocking, true);
             } 
             else if (context.canceled)
             {
                 _isBlocking = false;
-                _animator.SetBool(IsBlocking, false);
             }
         }
 
         public void DoDodge(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Dodging");
             _animator.SetTrigger(Dodge);
         }
         
         public void DoLightAttack(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Light Attack");
             _animator.SetTrigger(LightAtt);
+            _playerDamage.DoNormalAttack();
         }
         
         public void DoHeavyAttack(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Heavy Attack");
             _animator.SetTrigger(HeavyAtt);
+            _playerDamage.DoHeavyAttack();
         }
         
         public void DoSkill1(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Skill 1");
             _animator.SetTrigger(Skill1);
+            _playerDamage.DoSkill1();
         }
         
         public void DoSkill2(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Skill 2");
             _animator.SetTrigger(Skill2);
+            _playerDamage.DoSkill2();
         }
         
         public void DoBandage(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Bandaging");
             _animator.SetTrigger(Bandage);
         }
         
         public void Inventory(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Opening Inventory");
+            Debug.Log("Inventory Opened");
         }
         
         public void Interact(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("Interaction");
+            Debug.Log("Interacted");
         }
+        
+        #endregion
         
         //Enable/Disable
         #region Enable/Disable
@@ -202,5 +194,18 @@ namespace Characters.Playable.Scripts
         }
 
         #endregion
+        
+        //HandleAnimations
+        public void AnimationStarted()
+        {
+            _animator.SetBool(CanExecute, false);
+            _playerDamage.activeWeapon.GetComponent<BoxCollider>().enabled = true;
+        }
+        
+        public void AnimationEnded()
+        {
+            _animator.SetBool(CanExecute, true);
+            _playerDamage.activeWeapon.GetComponent<BoxCollider>().enabled = false;
+        }
     }
 }

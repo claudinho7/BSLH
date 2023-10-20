@@ -33,12 +33,15 @@ namespace Characters.Playable.Scripts
 
 
         //gear stuff
+        public GameObject[] weaponsList;
         public GameObject activeWeapon; //equipped weapon
         private GameObject _previousActiveWeapon;
+        public GameObject[] armoursList;
         public GameObject activeArmor; //equipped armor
         private GameObject _previousActiveArmor;
         private string _equippedWeaponName;
         private string _equippedArmorName;
+        public Transform weaponBone;
         
         //animation cache
         private static readonly int Died = Animator.StringToHash("Died");
@@ -47,6 +50,10 @@ namespace Characters.Playable.Scripts
         {
             _animator = GetComponent<Animator>();
             currentHealth = maxHealth;
+            
+            //set gear
+            AttachWeapon();
+            activeArmor = armoursList[0]; //needs changing
         }
 
         private void Start()
@@ -262,31 +269,31 @@ namespace Characters.Playable.Scripts
         {
             switch (_equippedWeaponName)
             {
-                case "Sword":
+                case "Sword(Clone)":
                     baseDamage = 10f;
                     damageType = IDamageStats.DamageType.Slashing;
                     break;
-                case "Spear":
+                case "Spear(Clone)":
                     baseDamage = 8f;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
-                case "Hammer":
+                case "Hammer(Clone)":
                     baseDamage = 17f;
                     damageType = IDamageStats.DamageType.Blunt;
                     break;
-                case "GreatSword":
+                case "GreatSword(Clone)":
                     baseDamage = 14f;
                     damageType = IDamageStats.DamageType.Slashing;
                     break;
-                case "Daggers":
+                case "Daggers(Clone)":
                     baseDamage = 8f;
                     damageType = IDamageStats.DamageType.Slashing;
                     break;
-                case "Crossbow":
+                case "Crossbow(Clone)":
                     baseDamage = 7f;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
-                case "Bow":
+                case "Bow(Clone)":
                     baseDamage = 5f;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
@@ -299,6 +306,24 @@ namespace Characters.Playable.Scripts
                 "Heavy" => IDamageStats.ArmorType.Heavy,
                 _ => armorType
             };
+        }
+
+        //attach weapon to bone
+        private void AttachWeapon()
+        {
+            if (weaponsList != null && weaponBone != null)
+            {
+                // Instantiate the prefab and make the attachedPrefab a child of the bone.
+                activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
+                
+                // Reset the local position and rotation if needed.
+                activeWeapon.transform.localPosition = Vector3.zero;
+                //attachedPrefab.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                Debug.LogError("Bone or prefab reference is missing.");
+            }
         }
 
 
