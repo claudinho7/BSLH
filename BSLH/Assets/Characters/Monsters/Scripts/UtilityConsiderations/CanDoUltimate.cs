@@ -9,7 +9,9 @@ namespace Characters.Monsters.Scripts.UtilityConsiderations
     {
         public override float ScoreConsideration(AIController aiController)
         {
-            if (aiController.canDoUltimate && aiController.damage.currentHealth <= 70f)
+            var threshold = 0.7f * aiController.damage.maxHealth;
+            
+            if (aiController.canDoUltimate && aiController.damage.currentHealth <= threshold)
             {
                 Score = 1f;
             }

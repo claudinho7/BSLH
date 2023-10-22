@@ -38,6 +38,7 @@ namespace Characters.Monsters.Scripts
 
         private void TakeDamage(float damage)
         {
+            Debug.Log("monster took" + damage + "damage");
             // Subtract the calculated damage from the current health.
             currentHealth -= damage;
 
@@ -105,9 +106,9 @@ namespace Characters.Monsters.Scripts
             // Define slashing damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.3f,
-                IDamageStats.ArmorType.Medium => 1.1f,
-                IDamageStats.ArmorType.Heavy => 0.7f,
+                IDamageStats.ArmorType.Light => 1.4f,
+                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Heavy => 1f,
                 _ => 1f
             };
         }
@@ -118,7 +119,7 @@ namespace Characters.Monsters.Scripts
             return armorType switch
             {
                 IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.3f,
+                IDamageStats.ArmorType.Medium => 1.4f,
                 IDamageStats.ArmorType.Heavy => 1f,
                 _ => 1f
             };
@@ -129,8 +130,8 @@ namespace Characters.Monsters.Scripts
             // Define blunt damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Light => 1.4f,
+                IDamageStats.ArmorType.Medium => 1.4f,
                 IDamageStats.ArmorType.Heavy => 1.3f,
                 _ => 1f
             };
@@ -161,6 +162,7 @@ namespace Characters.Monsters.Scripts
         private void ApplyDecay(float damage)
         {
             maxHealth -= damage;
+            Debug.Log("decay applied");
         }
         
         private IEnumerator DoTickingDamage(float damage, float duration)
@@ -173,9 +175,9 @@ namespace Characters.Monsters.Scripts
                 TakeDamage(damage);
 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 5;
+                elapsedTime += 1;
             }
         }
         
@@ -189,9 +191,9 @@ namespace Characters.Monsters.Scripts
                 Debug.Log("Player is Blinded");
 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(3);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 3;
+                elapsedTime += 1;
             }
         }
         
@@ -201,13 +203,13 @@ namespace Characters.Monsters.Scripts
 
             while (elapsedTime < duration)
             {
-                // Apply blinding.
+                // Apply stagger.
                 Debug.Log("is Stunned");
 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 2;
+                elapsedTime += 1;
             }
         }
         
@@ -215,7 +217,7 @@ namespace Characters.Monsters.Scripts
         {
             var elapsedTime = 0f;
 
-            while (elapsedTime < 10)
+            while (elapsedTime < 10f)
             {
                 var oldBaseDamage = baseDamage;
                 // Apply rage
@@ -225,7 +227,7 @@ namespace Characters.Monsters.Scripts
                 // Wait for the tick interval.
                 yield return new WaitForSeconds(10);
 
-                elapsedTime += 10;
+                elapsedTime = 10f;
                 baseDamage = oldBaseDamage;
             }
         }
@@ -239,6 +241,7 @@ namespace Characters.Monsters.Scripts
         {
             skillModifier = 1f; // to be changed depending on the type of skill used
             hasCondition = false;
+            conditionType = IDamageStats.ConditionType.None;
         }
 
         public void DoNormalRangedAttack()
@@ -248,13 +251,12 @@ namespace Characters.Monsters.Scripts
                 case "Gorgon": //bow shot
                     skillModifier = 1f;
                     hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
                     break;
-                case "Gargoyle": //left swipe
-                    skillModifier = 4f;
-                    hasCondition = true;
-                    conditionDamage = 0;
-                    conditionTime = 0;
-                    conditionType = IDamageStats.ConditionType.PushBack;
+                case "Gargoyle": //throw
+                    skillModifier = 1f;
+                    hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
                     break;
                 case "Satyr": //charge
                     skillModifier = 4f;
@@ -278,12 +280,18 @@ namespace Characters.Monsters.Scripts
                     conditionTime = 3;
                     conditionType = IDamageStats.ConditionType.Stagger;
                     break;
-                case "Gargoyle": //double slam
-                    skillModifier = 5f;
+                case "Gargoyle": //bite
+                    skillModifier = 4f;
                     hasCondition = true;
-                    conditionDamage = 0;
-                    conditionTime = 3;
-                    conditionType = IDamageStats.ConditionType.Stagger;
+                    conditionDamage = 4;
+                    conditionTime = 5;
+                    conditionType = IDamageStats.ConditionType.Bleed;
+                    currentHealth += 5f; //heal for 5
+                    //check to not go above max health
+                    if (currentHealth >= maxHealth)
+                    {
+                        currentHealth = maxHealth;
+                    }
                     break;
                 case "Satyr": //shield bash
                     skillModifier = 3f;
@@ -307,10 +315,12 @@ namespace Characters.Monsters.Scripts
                     conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Poison;
                     break;
-                case "Gargoyle": //rage
-                    skillModifier = 1f;
-                    hasCondition = false;
-                    StartCoroutine(Rage());
+                case "Gargoyle": //double slam
+                    skillModifier = 5f;
+                    hasCondition = true;
+                    conditionDamage = 0;
+                    conditionTime = 3;
+                    conditionType = IDamageStats.ConditionType.Stagger;
                     break;
                 case "Satyr": //decay magic
                     skillModifier = 5f;
@@ -334,17 +344,16 @@ namespace Characters.Monsters.Scripts
                     conditionTime = 3;
                     conditionType = IDamageStats.ConditionType.Blind;
                     break;
-                case "Gargoyle": //bite
-                    skillModifier = 4f;
-                    hasCondition = true;
-                    conditionDamage = 4;
-                    conditionTime = 5;
-                    conditionType = IDamageStats.ConditionType.Bleed;
-                    currentHealth += 20f; //heal for 20 every ultimate
+                case "Gargoyle": //rage
+                    skillModifier = 1f;
+                    hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
+                    StartCoroutine(Rage());
                     break;
                 case "Satyr": //heal
                     skillModifier = 1f;
                     hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
                     currentHealth += 20f; //heal for 20 every ultimate
                     break;
             }

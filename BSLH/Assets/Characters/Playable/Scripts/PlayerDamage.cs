@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Characters.Monsters.Scripts;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Characters.Playable.Scripts
 {
@@ -14,11 +15,11 @@ namespace Characters.Playable.Scripts
 
     public class PlayerDamage : MonoBehaviour, IDamageStats
     {
-        private Animator _animator;
+        private PlayerMovement _playerMovement;
+        
         //health
         public float maxHealth = 100f;
         public float currentHealth;
-        public float stamina = 100f;
         private float _totalDamageTaken; // used to calculate flat damage taken
 
         //stats
@@ -42,13 +43,12 @@ namespace Characters.Playable.Scripts
         private string _equippedWeaponName;
         private string _equippedArmorName;
         public Transform weaponBone;
-        
-        //animation cache
-        private static readonly int Died = Animator.StringToHash("Died");
+
+        public Image blindingImage;
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
+            _playerMovement = GetComponent<PlayerMovement>();
             currentHealth = maxHealth;
             
             //set gear
@@ -65,10 +65,11 @@ namespace Characters.Playable.Scripts
             _equippedArmorName = activeArmor.name;
             SwitchGear(); //trigger gear update on start
             conditionType = IDamageStats.ConditionType.None; //set condition to none
+            activeWeapon.GetComponent<BoxCollider>().enabled = false;//set the weapon collision off at start
         }
 
         private void Update()
-        { 
+        {
             // Check if there is an equipped weapon.
             if (activeWeapon != null || activeArmor != null)
             {
@@ -77,13 +78,11 @@ namespace Characters.Playable.Scripts
                 _equippedArmorName = activeArmor.name;
 
                 // Check if the active Gear GameObject has changed.
-                if (_previousActiveWeapon != activeWeapon || _previousActiveArmor != activeArmor)
-                {
-                    SwitchGear();
-                    // Update the previous Gear variable.
-                    _previousActiveWeapon = activeWeapon;
-                    _previousActiveArmor = activeArmor;
-                }
+                if (_previousActiveWeapon == activeWeapon && _previousActiveArmor == activeArmor) return;
+                SwitchGear();
+                // Update the previous Gear variable.
+                _previousActiveWeapon = activeWeapon;
+                _previousActiveArmor = activeArmor;
             }
         }
 
@@ -93,10 +92,9 @@ namespace Characters.Playable.Scripts
             // Subtract the calculated damage from the current health.
             currentHealth -= damage;
 
-            // Implement any additional logic for handling damage effects, death, etc.
+            // Implement any additional logic for handling death, etc.
             if (!(currentHealth <= 0f)) return;
-            _animator.SetTrigger(Died);
-            Debug.Log("Player Dead");
+            _playerMovement.PlayerDied();
         }
 
         //this calculates the hit damage
@@ -118,7 +116,18 @@ namespace Characters.Playable.Scripts
                 _ => 0f
             };
 
-            TakeDamage(_totalDamageTaken);
+            //send the damage to the Take Damage function
+            if (_playerMovement.isBlocking)
+            {
+                TakeDamage(_totalDamageTaken / 3);
+                _playerMovement.CalculateStamina(0f, 10f);
+                Debug.Log("player took" + _totalDamageTaken / 3 + "damage while blocking");
+            }
+            else
+            {
+                TakeDamage(_totalDamageTaken);
+                Debug.Log("player took" + _totalDamageTaken + "damage");
+            }
         }
 
         //this gets the over time damage and conditions
@@ -141,7 +150,7 @@ namespace Characters.Playable.Scripts
                 case IDamageStats.ConditionType.Stagger:
                     StartCoroutine(Stagger(duration));
                     break;
-                case IDamageStats.ConditionType.PushBack: 
+                case IDamageStats.ConditionType.PushBack:
                     PushBack();
                     break;
                 case IDamageStats.ConditionType.None:
@@ -149,7 +158,7 @@ namespace Characters.Playable.Scripts
                     throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
             }
         }
-        
+
         //defining multipliers
         #region Define Multipliers
         private float GetSlashingMultiplier()
@@ -157,9 +166,9 @@ namespace Characters.Playable.Scripts
             // Define slashing damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.3f,
-                IDamageStats.ArmorType.Medium => 1.1f,
-                IDamageStats.ArmorType.Heavy => 0.7f,
+                IDamageStats.ArmorType.Light => 1.4f,
+                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Heavy => 1f,
                 _ => 1f
             };
         }
@@ -170,7 +179,7 @@ namespace Characters.Playable.Scripts
             return armorType switch
             {
                 IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.3f,
+                IDamageStats.ArmorType.Medium => 1.4f,
                 IDamageStats.ArmorType.Heavy => 1f,
                 _ => 1f
             };
@@ -181,8 +190,8 @@ namespace Characters.Playable.Scripts
             // Define blunt damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Light => 1.4f,
+                IDamageStats.ArmorType.Medium => 1.4f,
                 IDamageStats.ArmorType.Heavy => 1.3f,
                 _ => 1f
             };
@@ -203,12 +212,12 @@ namespace Characters.Playable.Scripts
 
         //Status Effects
         #region Execute Status Effects
-        
+
         private void PushBack()
         {
-            //add pushback
-            Debug.Log("pushed back");
+            StartCoroutine(_playerMovement.FallBack());
         }
+        
         private void ApplyDecay(float damage)
         {
             maxHealth -= damage;
@@ -224,9 +233,9 @@ namespace Characters.Playable.Scripts
                 TakeDamage(damage);
 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 5;
+                elapsedTime += 1;
             }
         }
         
@@ -238,12 +247,15 @@ namespace Characters.Playable.Scripts
             {
                 // Apply blinding.
                 Debug.Log("Player is Blinded");
+                blindingImage.GetComponent<Image>().enabled = true;
 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(3);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 3;
+                elapsedTime += 1;
             }
+
+            blindingImage.GetComponent<Image>().enabled = false;
         }
         
         private IEnumerator Stagger(float duration)
@@ -252,14 +264,18 @@ namespace Characters.Playable.Scripts
 
             while (elapsedTime < duration)
             {
-                // Apply blinding.
+                // Apply stagger.
                 Debug.Log("is Stunned");
-
+                _playerMovement.canMove = false;
+                _playerMovement.canExecute = false;
+                
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(1);
 
-                elapsedTime += 2;
+                elapsedTime += 1;
             }
+            _playerMovement.canMove = true;
+            _playerMovement.canExecute = true;
         }
         
         #endregion
@@ -334,21 +350,23 @@ namespace Characters.Playable.Scripts
         {
             skillModifier = 1f; // to be added depending on the type of skill used
             hasCondition = false;
+            conditionType = IDamageStats.ConditionType.None;
         }
 
         public void DoHeavyAttack()
         {
             //modifiers change depending on weapon
             hasCondition = false;
+            conditionType = IDamageStats.ConditionType.None;
             skillModifier = _equippedWeaponName switch
             {
-                "Sword" => 4f,
-                "Spear" => 3f,
-                "Hammer" => 6f,
-                "GreatSword" => 5f,
-                "Daggers" => 2f,
-                "Crossbow" => 3f,
-                "Bow" => 2f,
+                "Sword(Clone)" => 4f,
+                "Spear(Clone)" => 3f,
+                "Hammer(Clone)" => 6f,
+                "GreatSword(Clone)" => 5f,
+                "Daggers(Clone)" => 2f,
+                "Crossbow(Clone)" => 3f,
+                "Bow(Clone)" => 2f,
                 _ => skillModifier
             };
         }
@@ -358,53 +376,53 @@ namespace Characters.Playable.Scripts
             //modifiers change depending on weapon
             switch (_equippedWeaponName)
             {
-                case "Sword":
+                case "Sword(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 3;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
-                case "Spear":
+                case "Spear(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 5;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
-                case "Hammer":
+                case "Hammer(Clone)":
                     skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Stagger;
                     break;
-                case "GreatSword":
+                case "GreatSword(Clone)":
                     skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 5;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
-                case "Daggers":
+                case "Daggers(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 3;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
-                case "Crossbow":
+                case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 5;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
-                case "Bow":
+                case "Bow(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 2;
-                    conditionTime = 3;
+                    conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
             }
@@ -415,49 +433,61 @@ namespace Characters.Playable.Scripts
             //modifiers change depending on weapon
             switch (_equippedWeaponName)
             {
-                case "Sword":
+                case "Sword(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Stagger;
                     break;
-                case "Spear":
+                case "Spear(Clone)":
                     skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "Hammer":
+                case "Hammer(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "GreatSword":
+                case "GreatSword(Clone)":
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Stagger;
                     break;
-                case "Daggers":
+                case "Daggers(Clone)":
                     skillModifier = 5f;
                     hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
                     break;
-                case "Crossbow":
+                case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "Bow":
+                case "Bow(Clone)":
                     skillModifier = 5f;
                     hasCondition = false;
+                    conditionType = IDamageStats.ConditionType.None;
                     break;
+            }
+        }
+
+        public void DoHeal()
+        {
+            currentHealth += 30f; //heal for 30
+            //check to not go above max health
+            if (currentHealth >= maxHealth)
+            {
+                currentHealth = maxHealth;
             }
         }
         #endregion

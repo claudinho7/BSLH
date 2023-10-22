@@ -1,4 +1,5 @@
 using System.Collections;
+using Characters.Playable.Scripts;
 using UnityEngine;
 
 namespace Characters.Monsters.Scripts.UtilityCore
@@ -11,6 +12,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private Animator _animator;
         public MonsterDamage damage;
+        private PlayerDamage _playerDamage;
 
         //animations
         //public bool animationStarted;
@@ -35,20 +37,18 @@ namespace Characters.Monsters.Scripts.UtilityCore
             Movement = GetComponent<AIMovement>();
             AIBrain = GetComponent<AIBrain>();
             _animator = GetComponent<Animator>();
-            damage = GetComponent<MonsterDamage>();
+            StartCoroutine(FindPlayer());
             
             canDoUltimate = true;
         }
 
         private void Update()
         {
-            if (Movement.isPatrolling && damage.currentHealth > 0f) return; //if player not seen and is patrolling or if AI is dead -> break
-            if (AIBrain.FinishedDeciding)
-            {
-                AIBrain.FinishedDeciding = false;
-                AIBrain.BestAction.Execute(this);
-                ActionCounter(AIBrain.BestAction.actionName);
-            }
+            if (Movement.isPatrolling && damage.currentHealth > 0f || _playerDamage.currentHealth <= 0f) return; //if player not seen and is patrolling or if AI is dead -> break
+            if (!AIBrain.FinishedDeciding) return;
+            AIBrain.FinishedDeciding = false;
+            AIBrain.BestAction.Execute(this);
+            ActionCounter(AIBrain.BestAction.actionName);
         }
 
         private void OnFinishedAction()
@@ -58,13 +58,13 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         //Animations Start/Stop
         #region HandleAnimations
-        private void AnimationStarted()
+        public void AnimationStarted()
         {
             //animationStarted = true;
             //animationEnded = false;
         }
 
-        private void AnimationEnded()
+        public void AnimationEnded()
         { 
             //animationStarted = false;
             //animationEnded = true;
@@ -78,7 +78,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             while (Movement.distanceToPlayer > 2f)
             {
-                Debug.Log("Moving in melee");
                 Movement.MoveInMelee();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
@@ -92,7 +91,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             while (Movement.distanceToPlayer is < 5f or >12f)
             {
-                Debug.Log("Moving in ranged");
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
@@ -106,7 +104,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             while (Movement.distanceToPlayer > 2f)
             {
-                Debug.Log("Moving in melee");
                 Movement.MoveInMelee();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
@@ -120,7 +117,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             while (Movement.distanceToPlayer is < 5f or >12f)
             {
-                Debug.Log("Moving in ranged");
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
@@ -134,7 +130,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             while (Movement.distanceToPlayer > 12f)
             {
-                Debug.Log("Moving in ranged");
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
             }
@@ -142,6 +137,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
             Movement.LookAtPlayer();
             _animator.SetTrigger(UltimateAtt);
             damage.DoUltimateAttack();
+            StartCoroutine(UltimateCooldown());
         }
         #endregion
         
@@ -155,7 +151,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
                     actionCounterNormalRanged = 0;
                     actionCounterSpecialMelee = 0;
                     actionCounterSpecialRanged = 0;
-                    Debug.Log("normal melee counter updated");
                     break;
                 case "NormalRanged":
                     actionCounterNormalRanged += 1;
@@ -168,7 +163,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
                     actionCounterNormalMelee = 0;
                     actionCounterNormalRanged = 0;
                     actionCounterSpecialRanged = 0;
-                    Debug.Log("special melee counter updated");
                     break;
                 case "SpecialRanged":
                     actionCounterSpecialRanged += 1;
@@ -181,7 +175,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
                     actionCounterNormalMelee = 0;
                     actionCounterNormalRanged = 0;
                     actionCounterSpecialMelee = 0;
-                    StartCoroutine(UltimateCooldown());
                     break;
             }
         }
@@ -193,6 +186,17 @@ namespace Characters.Monsters.Scripts.UtilityCore
             yield return new WaitForSeconds(15.0f); // Wait for 15 seconds
 
             canDoUltimate = true;
+        }
+
+        private IEnumerator FindPlayer()
+        {
+            while (_playerDamage == null)
+            {
+                _playerDamage = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDamage>();
+                Movement.playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+                yield return null;
+            }
         }
     }
 }

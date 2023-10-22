@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Characters.Playable.Scripts
 { 
@@ -10,14 +12,23 @@ namespace Characters.Playable.Scripts
         private Transform _cameraMain;
         private PlayerInput _playerInput;
         private PlayerDamage _playerDamage;
+        private PlayerUI _playerUI;
+        private GameObject _monster;
 
         [SerializeField] private float cameraRotationSpeed = 3f;
+        [SerializeField] private bool targetLocked;
         private Vector2 _playerMovement;
         private Quaternion _playerRotation;
         private bool _groundedPlayer;
 
+        //stats
+        public float stamina = 100f;
+        [SerializeField] private float staminaRechargeRate;
         private bool _isSprinting;
-        private bool _isBlocking;
+        public bool isBlocking;
+        public bool canExecute;
+        public bool canMove;
+        public bool canInteractWithMap;
 
         //animation cache
         private static readonly int Jump = Animator.StringToHash("Jump");
@@ -30,21 +41,21 @@ namespace Characters.Playable.Scripts
         private static readonly int Bandage = Animator.StringToHash("Bandage");
         private static readonly int Horizontal = Animator.StringToHash("Horizontal");
         private static readonly int Vertical = Animator.StringToHash("Vertical");
-        private static readonly int CanExecute = Animator.StringToHash("CanExecute");
+        private static readonly int Died = Animator.StringToHash("Died");
+        private static readonly int Back = Animator.StringToHash("FallBack");
 
         private void Awake()
         {
             _playerInput = new PlayerInput();
-
             _playerDamage = GetComponent<PlayerDamage>();
             _animator = GetComponent<Animator>();
             _controller = GetComponent<CharacterController>();
-            if (Camera.main != null) _cameraMain = Camera.main.transform;
-        }
+            _playerUI = GetComponent<PlayerUI>();
 
-        private void Start()
-        {
-            _animator.SetBool(CanExecute, true);
+            if (Camera.main != null) _cameraMain = Camera.main.transform;
+
+            canExecute = true;
+            canMove = true;
         }
 
         private void Update()
@@ -56,53 +67,88 @@ namespace Characters.Playable.Scripts
             //movement && sprinting
             switch (_isSprinting)
             {
+                case true:
+                    _animator.SetFloat(Horizontal, _playerMovement.x * 2f);
+                    _animator.SetFloat(Vertical, _playerMovement.y * 2f);
+                    CalculateStamina(8f, 0f);
+                    break;
                 case false:
                     _animator.SetFloat(Horizontal, _playerMovement.x);
                     _animator.SetFloat(Vertical, _playerMovement.y);
                     break;
-                case true:
-                    _animator.SetFloat(Horizontal, _playerMovement.x * 2f);
-                    _animator.SetFloat(Vertical, _playerMovement.y * 2f);
-                    break;
-            }
-            
-            //rotation
-            if (_playerMovement != Vector2.zero)
-            {
-                _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
-                transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation, Time.deltaTime * cameraRotationSpeed);
             }
 
             //blocking
-            switch (_isBlocking)
+            switch (isBlocking)
             {
                 case true:
                     _animator.SetBool(IsBlocking, true);
+                    CalculateStamina(5f, 0f);
                     break;
                 case false:
                     _animator.SetBool(IsBlocking, false);
                     break;
             }
-        }
+            
+            //stamina regen
+            if (!_isSprinting && !isBlocking && stamina <= 100f)
+            {
+                stamina += staminaRechargeRate * Time.deltaTime;
 
+                if (stamina >= 100f)
+                {
+                    stamina = 100f;
+                }
+            }
+
+            //target lock and body rotation
+            if (targetLocked && _monster != null)
+            { 
+                //look at monster
+                // Get direction from monster
+                var targetDirection = _monster.transform.position - transform.position; 
+                // Calculate the Y rotation based on the direction to the target.
+                var targetYRotation = Mathf.Atan2(targetDirection.x, targetDirection.z) * Mathf.Rad2Deg;
+                
+                _playerRotation = Quaternion.Euler(0f, targetYRotation, 0f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
+                    Time.deltaTime * cameraRotationSpeed);
+            }
+            else
+            {
+                //rotate where camera is looking
+                if (_playerMovement == Vector2.zero) return;
+                _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
+                    Time.deltaTime * cameraRotationSpeed);
+            }
+        }
 
         //action triggers
         #region Action Triggers
         
         public void PlayerMove(InputAction.CallbackContext context)
         {
-            _playerMovement = context.ReadValue<Vector2>();
+            if (context.performed && canMove)
+            {
+                _playerMovement = context.ReadValue<Vector2>();
+            }
+            else
+            {
+                _playerMovement = Vector2.zero;
+            }
         }
         
         public void DoJump(InputAction.CallbackContext context)
         {
-            if (!context.performed || !_groundedPlayer) return;
+            if (!context.performed || !canExecute || !_groundedPlayer || !(stamina >= 30f)) return;
             _animator.SetTrigger(Jump);
+            CalculateStamina(0f, 30f);
         }
 
         public void PlayerSprint(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.started && stamina >= 8f && canExecute)
             {
                 _isSprinting = true;
             } 
@@ -114,66 +160,93 @@ namespace Characters.Playable.Scripts
         
         public void PlayerBlocking(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.started && stamina >= 5f && canExecute)
             {
-                _isBlocking = true;
+                isBlocking = true;
             } 
             else if (context.canceled)
             {
-                _isBlocking = false;
+                isBlocking = false;
             }
         }
 
         public void DoDodge(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 30f) || !canExecute) return;
             _animator.SetTrigger(Dodge);
+            CalculateStamina(0f, 30f);
         }
         
         public void DoLightAttack(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 10f) || !canExecute) return;
             _animator.SetTrigger(LightAtt);
             _playerDamage.DoNormalAttack();
+            CalculateStamina(0f,10f);
         }
         
         public void DoHeavyAttack(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
             _animator.SetTrigger(HeavyAtt);
             _playerDamage.DoHeavyAttack();
+            CalculateStamina(0f,20f);
         }
         
         public void DoSkill1(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
             _animator.SetTrigger(Skill1);
             _playerDamage.DoSkill1();
+            CalculateStamina(0f,20f);
         }
         
         public void DoSkill2(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
             _animator.SetTrigger(Skill2);
             _playerDamage.DoSkill2();
+            CalculateStamina(0f,20f);
         }
         
         public void DoBandage(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !(stamina >= 5f) || !canExecute) return;
             _animator.SetTrigger(Bandage);
+            CalculateStamina(0f,5f);
+            _playerDamage.DoHeal();
         }
         
         public void Inventory(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
+            if (!context.performed || !canExecute) return;
             Debug.Log("Inventory Opened");
         }
         
         public void Interact(InputAction.CallbackContext context)
         {
+            if (!context.performed || !canExecute) return;
+            if (canInteractWithMap)
+            {
+                _playerUI.OpenMap();
+                Debug.Log("Interacted with map");
+            }
+        }
+
+        public void LockTarget(InputAction.CallbackContext context)
+        {
+            targetLocked = context.performed switch
+            {
+                true when !targetLocked => true,
+                true when targetLocked => false,
+                _ => targetLocked
+            };
+        }
+        
+        public void Pause(InputAction.CallbackContext context)
+        {
             if (!context.performed) return;
-            Debug.Log("Interacted");
+            Debug.Log("GamePaused");
         }
         
         #endregion
@@ -195,17 +268,121 @@ namespace Characters.Playable.Scripts
 
         #endregion
         
+        //calculate Stamina
+        public void CalculateStamina(float drainage, float hit)
+        {
+            stamina -= drainage * Time.deltaTime;
+            stamina -= hit;
+
+            if (stamina < 0f)
+            {
+                stamina = 0f;
+            }
+        }
+        
         //HandleAnimations
+        #region AnimationEvents
+        
         public void AnimationStarted()
         {
-            _animator.SetBool(CanExecute, false);
-            _playerDamage.activeWeapon.GetComponent<BoxCollider>().enabled = true;
+            canExecute = false;
         }
         
         public void AnimationEnded()
         {
-            _animator.SetBool(CanExecute, true);
+            canExecute = true;
+        }
+
+        public void CollisionEnabled()
+        {
+            _playerDamage.activeWeapon.GetComponent<BoxCollider>().enabled = true;
+        }
+        
+        public void CollisionDisabled()
+        {
             _playerDamage.activeWeapon.GetComponent<BoxCollider>().enabled = false;
         }
+        
+        #endregion
+
+        public void PlayerDied()
+        {
+            if (!canExecute) return;
+            _animator.SetTrigger(Died);
+            Debug.Log("Player Dead");
+            _playerInput.Disable(); //not working??
+        }
+
+        public IEnumerator FallBack()
+        {
+            Debug.Log("pushed back");
+
+            // Apply pushback.
+            canExecute = false;
+            canMove = false;
+            _animator.SetTrigger(Back);
+
+            // Wait for the animation interval.
+            yield return new WaitForSeconds(3.3f);
+
+            canExecute = true;
+            canMove = true;
+        }
+
+        //teleporting
+        #region Teleport
+        private string _sceneToBeLoaded;
+        
+        public void Arena1Teleport()
+        {
+            _sceneToBeLoaded = "S_Area1";
+            StartCoroutine(LoadScene());
+        }
+        
+        public void Arena2Teleport()
+        {
+            _sceneToBeLoaded = "S_Area2";
+            StartCoroutine(LoadScene());
+        }
+        
+        public void Arena3Teleport()
+        {
+            _sceneToBeLoaded = "S_Area3";
+            StartCoroutine(LoadScene());
+        }
+        
+        public void Arena4Teleport()
+        {
+            _sceneToBeLoaded = "Claudiu's Playground";
+            StartCoroutine(LoadScene());
+        }
+
+        private IEnumerator LoadScene()
+        {
+            // Set the current Scene to be able to unload it later
+            var currentScene = SceneManager.GetActiveScene();
+
+            // The Application loads the Scene in the background at the same time as the current Scene.
+            var asyncLoad = SceneManager.LoadSceneAsync(_sceneToBeLoaded, LoadSceneMode.Additive);
+
+            // Wait until the last operation fully loads to return anything
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+
+            // Move the GameObject (you attach this in the Inspector) to the newly loaded Scene
+            SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetSceneByName(_sceneToBeLoaded));
+            transform.position = new Vector3(0, 0, 0);
+            _playerUI.CloseMap();
+            _playerUI.HideInteract();
+            _monster = GameObject.FindGameObjectWithTag("Monster");
+            Debug.Log(_monster.name);
+            
+            // Unload the previous Scene
+            SceneManager.UnloadSceneAsync(currentScene);
+        }
+
+        #endregion
     }
 }
