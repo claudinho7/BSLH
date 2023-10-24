@@ -12,7 +12,9 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private Animator _animator;
         public MonsterDamage damage;
-        private PlayerDamage _playerDamage;
+        public PlayerDamage playerDamage;
+
+        private bool _playerFound;
 
         //animations
         //public bool animationStarted;
@@ -32,23 +34,46 @@ namespace Characters.Monsters.Scripts.UtilityCore
         private static readonly int SpecialAttRanged = Animator.StringToHash("SpecialAttRanged");
         private static readonly int UltimateAtt = Animator.StringToHash("UltimateAtt");
 
+        private void Awake()
+        {
+            // Check if _playerDamage is still null and the player is not yet found.
+            if (playerDamage == null && !_playerFound)
+            {
+                StartCoroutine(FindPlayer());
+            }
+            else
+            {
+                // PlayerDamage is already set, or player search is in progress.
+                if (playerDamage == null)
+                {
+                    Debug.Log("PlayerDamage not set; still searching for the player...");
+                }
+                else
+                {
+                    Debug.Log("PlayerDamage already set.");
+                }
+            }
+        }
+
         private void Start()
         {
             Movement = GetComponent<AIMovement>();
             AIBrain = GetComponent<AIBrain>();
             _animator = GetComponent<Animator>();
-            StartCoroutine(FindPlayer());
-            
+
             canDoUltimate = true;
         }
 
         private void Update()
         {
-            if (Movement.isPatrolling && damage.currentHealth > 0f || _playerDamage.currentHealth <= 0f) return; //if player not seen and is patrolling or if AI is dead -> break
-            if (!AIBrain.FinishedDeciding) return;
-            AIBrain.FinishedDeciding = false;
-            AIBrain.BestAction.Execute(this);
-            ActionCounter(AIBrain.BestAction.actionName);
+            //if player not seen and is patrolling or if AI is dead -> break
+            if (playerDamage != null  && !(playerDamage.currentHealth <= 0f) && (!Movement.isPatrolling || !(damage.currentHealth > 0f)))
+            {
+                if (!AIBrain.FinishedDeciding) return;
+                AIBrain.FinishedDeciding = false;
+                AIBrain.BestAction.Execute(this);
+                ActionCounter(AIBrain.BestAction.actionName);
+            }
         }
 
         private void OnFinishedAction()
@@ -190,12 +215,29 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private IEnumerator FindPlayer()
         {
-            while (_playerDamage == null)
+            while (!_playerFound)
             {
-                _playerDamage = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDamage>();
-                Movement.playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+                var playerObject = GameObject.FindGameObjectWithTag("Player");
 
-                yield return null;
+                if (playerObject != null)
+                {
+                    playerDamage = playerObject.GetComponent<PlayerDamage>();
+
+                    if (playerDamage != null)
+                    {
+                        _playerFound = true; // Exit the loop when the player and script are found.
+                    }
+                    else
+                    {
+                        Debug.LogWarning("PlayerDamage script not found on the 'Player' GameObject. Retrying...");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Player GameObject not found. Retrying...");
+                }
+
+                yield return new WaitForSeconds(5.0f); // Adjust the delay between attempts.
             }
         }
     }

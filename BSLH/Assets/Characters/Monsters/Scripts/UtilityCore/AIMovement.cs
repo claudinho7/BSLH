@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,9 +13,12 @@ namespace Characters.Monsters.Scripts.UtilityCore
         //Vision
         private const float ProximityDistance = 15f;
         private Vector3 _directionToPlayer;
+        private Vector3 _playerPosition;
         public bool canHitMelee;
         public bool canHitRanged;
         public float distanceToPlayer;
+        
+        private bool _playerFound;
         
         //for random patrol
         private const float PatrolRange = 15f;
@@ -28,6 +32,24 @@ namespace Characters.Monsters.Scripts.UtilityCore
         {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponent<Animator>();
+            
+            // Check if _playerDamage is still null and the player is not yet found.
+            if (playerTransform == null && !_playerFound)
+            {
+                StartCoroutine(FindPlayer());
+            }
+            else
+            {
+                // PlayerDamage is already set, or player search is in progress.
+                if (playerTransform == null)
+                {
+                    Debug.Log("PlayerTransform not set; still searching for the player...");
+                }
+                else
+                {
+                    Debug.Log("PlayerTransform already set.");
+                }
+            }
         }
         
         private void Start()
@@ -39,13 +61,28 @@ namespace Characters.Monsters.Scripts.UtilityCore
         private void Update()
         {
             _animator.SetFloat(Speed, _agent.velocity.magnitude); //if agent moving -> use walk / speed animation
+            
+            // Check if patrolling is active.
+            if (isPatrolling && _agent.remainingDistance <= _agent.stoppingDistance)
+            {
+                Patrol();
+            }
 
             #region AI Vision
             // Calculate the direction from AI to player
             var position = transform.position;
-            var playerPosition = playerTransform.position;
-            _directionToPlayer = playerPosition - position;
-            distanceToPlayer = Vector3.Distance(position, playerPosition); //set distance to player
+            if (playerTransform != null)
+            {
+                _playerPosition = playerTransform.position;
+            }
+            else
+            {
+                Debug.LogWarning("Player Transform Not Found");
+                _playerPosition = new Vector3(500, 500, 500);
+            }
+            
+            _directionToPlayer = _playerPosition - position;
+            distanceToPlayer = Vector3.Distance(position, _playerPosition); //set distance to player
 
             // Create a ray from AI's position towards the player
             var ray = new Ray(position, _directionToPlayer);
@@ -82,12 +119,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 canHitRanged = false;
             }
             #endregion
-
-            // Check if patrolling is active.
-            if (isPatrolling && _agent.remainingDistance <= _agent.stoppingDistance)
-            {
-                Patrol();
-            }
         }
 
         public void LookAtPlayer()
@@ -141,5 +172,33 @@ namespace Characters.Monsters.Scripts.UtilityCore
         }
 
         #endregion
+        
+        private IEnumerator FindPlayer()
+        {
+            while (!_playerFound)
+            {
+                var playerObject = GameObject.FindGameObjectWithTag("Player");
+
+                if (playerObject != null)
+                {
+                    playerTransform = playerObject.transform;
+
+                    if (playerTransform != null)
+                    {
+                        _playerFound = true; // Exit the loop when the player and script are found.
+                    }
+                    else
+                    {
+                        Debug.LogWarning("PlayerTransform not found on the 'Player' GameObject. Retrying...");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Player GameObject not found. Retrying...");
+                }
+
+                yield return new WaitForSeconds(5.0f); // Adjust the delay between attempts.
+            }
+        }
     }
 }

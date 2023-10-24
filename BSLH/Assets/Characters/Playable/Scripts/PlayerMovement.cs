@@ -332,28 +332,33 @@ namespace Characters.Playable.Scripts
         //teleporting
         #region Teleport
         private string _sceneToBeLoaded;
+        private Vector3 _locationToBeTeleported;
         
         public void Arena1Teleport()
         {
             _sceneToBeLoaded = "S_Area1";
+            _locationToBeTeleported = new Vector3(30, 20, 10);
             StartCoroutine(LoadScene());
         }
         
         public void Arena2Teleport()
         {
             _sceneToBeLoaded = "S_Area2";
+            _locationToBeTeleported = new Vector3(30, 20, 10);
             StartCoroutine(LoadScene());
         }
         
         public void Arena3Teleport()
         {
             _sceneToBeLoaded = "S_Area3";
+            _locationToBeTeleported = new Vector3(30, 20, 10);
             StartCoroutine(LoadScene());
         }
         
         public void Arena4Teleport()
         {
             _sceneToBeLoaded = "Claudiu's Playground";
+            _locationToBeTeleported = new Vector3(20, 0, 20);
             StartCoroutine(LoadScene());
         }
 
@@ -371,13 +376,12 @@ namespace Characters.Playable.Scripts
                 yield return null;
             }
 
-            // Move the GameObject (you attach this in the Inspector) to the newly loaded Scene
+            // Move the Player to the newly loaded Scene
             SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetSceneByName(_sceneToBeLoaded));
-            transform.position = new Vector3(0, 0, 0);
+            transform.position = _locationToBeTeleported;
             _playerUI.CloseMap();
             _playerUI.HideInteract();
             _monster = GameObject.FindGameObjectWithTag("Monster");
-            Debug.Log(_monster.name);
             
             // Unload the previous Scene
             SceneManager.UnloadSceneAsync(currentScene);
