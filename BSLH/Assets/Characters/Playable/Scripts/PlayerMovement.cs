@@ -225,12 +225,10 @@ namespace Characters.Playable.Scripts
         
         public void Interact(InputAction.CallbackContext context)
         {
-            if (!context.performed || !canExecute) return;
-            if (canInteractWithMap)
-            {
-                _playerUI.OpenMap();
-                Debug.Log("Interacted with map");
-            }
+            if (!context.performed || !canExecute || !canInteractWithMap) return;
+            _playerUI.OpenMap(); 
+            Debug.Log("Interacted with map");
+
         }
 
         public void LockTarget(InputAction.CallbackContext context)
@@ -381,6 +379,7 @@ namespace Characters.Playable.Scripts
             transform.position = _locationToBeTeleported;
             _playerUI.CloseMap();
             _playerUI.HideInteract();
+            canInteractWithMap = false;
             _monster = GameObject.FindGameObjectWithTag("Monster");
             
             // Unload the previous Scene
