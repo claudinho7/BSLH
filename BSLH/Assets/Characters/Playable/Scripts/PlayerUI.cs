@@ -12,6 +12,7 @@ namespace Characters.Playable.Scripts
         public Image currentStaminaBar;
         public GameObject interact;
         public GameObject map;
+        public GameObject targetLock;
 
         private void Start()
         {
@@ -20,6 +21,7 @@ namespace Characters.Playable.Scripts
             
             map.SetActive(false);
             interact.SetActive(false);
+            targetLock.SetActive(false);
         }
 
         private void Update()
@@ -37,6 +39,16 @@ namespace Characters.Playable.Scripts
         public void HideInteract()
         {
             interact.SetActive(false);
+        }
+
+        public void ShowTargetLock()
+        {
+            targetLock.SetActive(true);
+        }
+
+        public void HideTargetLock()
+        {
+            targetLock.SetActive(false);
         }
 
         public void OpenMap()

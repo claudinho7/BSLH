@@ -104,6 +104,7 @@ namespace Characters.Playable.Scripts
             //target lock and body rotation
             if (targetLocked && _monster != null)
             { 
+                _playerUI.ShowTargetLock();
                 //look at monster
                 // Get direction from monster
                 var targetDirection = _monster.transform.position - transform.position; 
@@ -116,6 +117,7 @@ namespace Characters.Playable.Scripts
             }
             else
             {
+                _playerUI.HideTargetLock();
                 //rotate where camera is looking
                 if (_playerMovement == Vector2.zero) return;
                 _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
