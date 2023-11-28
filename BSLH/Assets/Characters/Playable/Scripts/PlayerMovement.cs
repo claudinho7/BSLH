@@ -58,12 +58,19 @@ namespace Characters.Playable.Scripts
             canMove = true;
         }
 
+        /// <summary>
+        /// Reference field for SmoothDamp of movement input
+        /// </summary>
+        private Vector2 movementSmoothVelocity = Vector2.zero;
+        
         private void Update()
         {
             #region Grounded
             _groundedPlayer = _controller.isGrounded;
             #endregion
-
+            
+            _playerMovement = Vector2.SmoothDamp(_playerMovement, TargetMovementVector, ref movementSmoothVelocity, _movementInputSmoothTime);
+            
             //movement && sprinting
             switch (_isSprinting)
             {
@@ -129,16 +136,12 @@ namespace Characters.Playable.Scripts
         //action triggers
         #region Action Triggers
         
+        
+        Vector2 TargetMovementVector = Vector2.zero;
+        
         public void PlayerMove(InputAction.CallbackContext context)
         {
-            if (context.performed && canMove)
-            {
-                _playerMovement = context.ReadValue<Vector2>();
-            }
-            else
-            {
-                _playerMovement = Vector2.zero;
-            }
+            TargetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
         }
         
         public void DoJump(InputAction.CallbackContext context)
@@ -333,7 +336,9 @@ namespace Characters.Playable.Scripts
         #region Teleport
         private string _sceneToBeLoaded;
         private Vector3 _locationToBeTeleported;
-        
+        [SerializeField][Range(0.001f, 2f)]
+        private float _movementInputSmoothTime;
+
         public void Arena1Teleport()
         {
             _sceneToBeLoaded = "S_Area1";
@@ -344,7 +349,7 @@ namespace Characters.Playable.Scripts
         public void Arena2Teleport()
         {
             _sceneToBeLoaded = "S_Area2";
-            _locationToBeTeleported = new Vector3(30, 20, 10);
+            _locationToBeTeleported = new Vector3(30, 3, 10);
             StartCoroutine(LoadScene());
         }
         

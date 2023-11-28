@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 5085897122986560656}
   - component: {fileID: 953086192160308517}
   - component: {fileID: 8619683548101601771}
+  - component: {fileID: 5384615079954459576}
   m_Layer: 0
   m_Name: broken car
   m_TagString: Untagged
@@ -115,3 +116,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5384615079954459576
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050359808201627163}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1130528405215256822, guid: 1bddda2be36bfae458cb5178f8be8de6, type: 3}

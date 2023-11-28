@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 3048368754219253558}
   - component: {fileID: 6687890706435912586}
   - component: {fileID: 1760378750807874001}
+  - component: {fileID: 83766518598280494}
   m_Layer: 0
   m_Name: Desert Tree
   m_TagString: Untagged
@@ -115,3 +116,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &83766518598280494
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3763169485613195222}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6849964322970993863, guid: c3c4f558232b2ce4cbb8a659fda8ed8e, type: 3}
