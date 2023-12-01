@@ -4,17 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-<<<<<<< Updated upstream
-=======
-    path: Assets/Scenes/S_MainMenu.unity
-    guid: 19177423e4a267d4585f82cea4512703
-  - enabled: 1
-    path: Assets/Scenes/S_Hub.unity
-    guid: e3a599979a3bb804cbbf80f0aef44e01
-  - enabled: 1
->>>>>>> Stashed changes
-    path: Assets/Scenes/Claudiu's Playground.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+  m_Scenes: []
   m_configObjects: {}
