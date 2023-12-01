@@ -31,6 +31,7 @@ namespace Characters.Playable.Scripts
         public float conditionTime; //damage over time duration
         public bool hasCondition; //check if damage over time is applied
         public float skillModifier = 1f; // to be added depending on the type of skill used
+        public bool targetLocked;
 
 
         //gear stuff

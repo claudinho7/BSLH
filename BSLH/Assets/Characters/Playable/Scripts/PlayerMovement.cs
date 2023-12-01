@@ -16,10 +16,13 @@ namespace Characters.Playable.Scripts
         private GameObject _monster;
 
         [SerializeField] private float cameraRotationSpeed = 3f;
-        [SerializeField] private bool targetLocked;
         private Vector2 _playerMovement;
         private Quaternion _playerRotation;
         private bool _groundedPlayer;
+        
+        private Vector2 _targetMovementVector = Vector2.zero;
+        [SerializeField][Range(0.001f, 2f)]
+        private float movementInputSmoothTime;
 
         //stats
         public float stamina = 100f;
@@ -61,18 +64,16 @@ namespace Characters.Playable.Scripts
         /// <summary>
         /// Reference field for SmoothDamp of movement input
         /// </summary>
-        private Vector2 movementSmoothVelocity = Vector2.zero;
+        private Vector2 _movementSmoothVelocity = Vector2.zero;
         
         private void Update()
         {
-            #region Grounded
             _groundedPlayer = _controller.isGrounded;
-            #endregion
             
-            _playerMovement = Vector2.SmoothDamp(_playerMovement, TargetMovementVector, ref movementSmoothVelocity, _movementInputSmoothTime);
+            _playerMovement = Vector2.SmoothDamp(_playerMovement, _targetMovementVector, ref _movementSmoothVelocity, movementInputSmoothTime);
             
             //movement && sprinting
-            switch (_isSprinting)
+            switch (_isSprinting && stamina >= 8f)
             {
                 case true:
                     _animator.SetFloat(Horizontal, _playerMovement.x * 2f);
@@ -109,9 +110,8 @@ namespace Characters.Playable.Scripts
             }
 
             //target lock and body rotation
-            if (targetLocked && _monster != null)
+            if (_playerDamage.targetLocked && _monster != null)
             { 
-                _playerUI.ShowTargetLock();
                 //look at monster
                 // Get direction from monster
                 var targetDirection = _monster.transform.position - transform.position; 
@@ -124,7 +124,6 @@ namespace Characters.Playable.Scripts
             }
             else
             {
-                _playerUI.HideTargetLock();
                 //rotate where camera is looking
                 if (_playerMovement == Vector2.zero) return;
                 _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
@@ -136,12 +135,9 @@ namespace Characters.Playable.Scripts
         //action triggers
         #region Action Triggers
         
-        
-        Vector2 TargetMovementVector = Vector2.zero;
-        
         public void PlayerMove(InputAction.CallbackContext context)
         {
-            TargetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
+            _targetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
         }
         
         public void DoJump(InputAction.CallbackContext context)
@@ -157,7 +153,7 @@ namespace Characters.Playable.Scripts
             {
                 _isSprinting = true;
             } 
-            else if (context.canceled)
+            else if (context.canceled || stamina < 8f)
             {
                 _isSprinting = false;
             }
@@ -238,11 +234,11 @@ namespace Characters.Playable.Scripts
 
         public void LockTarget(InputAction.CallbackContext context)
         {
-            targetLocked = context.performed switch
+            _playerDamage.targetLocked = context.performed switch
             {
-                true when !targetLocked => true,
-                true when targetLocked => false,
-                _ => targetLocked
+                true when (!_playerDamage.targetLocked && _monster != null) => true,
+                true when (_playerDamage.targetLocked && _monster != null) => false,
+                _ => _playerDamage.targetLocked
             };
         }
         
@@ -336,8 +332,6 @@ namespace Characters.Playable.Scripts
         #region Teleport
         private string _sceneToBeLoaded;
         private Vector3 _locationToBeTeleported;
-        [SerializeField][Range(0.001f, 2f)]
-        private float _movementInputSmoothTime;
 
         public void Arena1Teleport()
         {

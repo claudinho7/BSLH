@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Characters.Playable.Scripts;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private Animator _animator;
         public MonsterDamage damage;
+        public MonsterUI monsterUI;
         public PlayerDamage playerDamage;
 
         private bool _playerFound;
@@ -73,6 +75,19 @@ namespace Characters.Monsters.Scripts.UtilityCore
                 AIBrain.FinishedDeciding = false;
                 AIBrain.BestAction.Execute(this);
                 ActionCounter(AIBrain.BestAction.actionName);
+            }
+        }
+
+        private void LateUpdate()
+        {
+            if (playerDamage == null) return;
+            if (playerDamage.targetLocked)
+            {
+                monsterUI.ShowTargetLock();
+            }
+            else
+            {
+                monsterUI.HideTargetLock();
             }
         }
 
