@@ -19,6 +19,7 @@ namespace Characters.Playable.Scripts
         private Vector2 _playerMovement;
         private Quaternion _playerRotation;
         private bool _groundedPlayer;
+        private bool _inventoryOpened;
         
         private Vector2 _targetMovementVector = Vector2.zero;
         [SerializeField][Range(0.001f, 2f)]
@@ -220,16 +221,16 @@ namespace Characters.Playable.Scripts
         
         public void Inventory(InputAction.CallbackContext context)
         {
-            if (!context.performed || !canExecute) return;
-            Debug.Log("Inventory Opened");
+            if (context.performed && canExecute)
+            {
+                _playerUI.OpenInventory();
+            }
         }
         
         public void Interact(InputAction.CallbackContext context)
         {
             if (!context.performed || !canExecute || !canInteractWithMap) return;
-            _playerUI.OpenMap(); 
-            Debug.Log("Interacted with map");
-
+            _playerUI.OpenMap();
         }
 
         public void LockTarget(InputAction.CallbackContext context)
@@ -245,7 +246,7 @@ namespace Characters.Playable.Scripts
         public void Pause(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
-            Debug.Log("GamePaused");
+            _playerUI.Pause();
         }
         
         #endregion
@@ -306,8 +307,8 @@ namespace Characters.Playable.Scripts
 
         public void PlayerDied()
         {
-            if (!canExecute) return;
             _animator.SetTrigger(Died);
+            _playerUI.DeathScreen();
             Debug.Log("Player Dead");
             _playerInput.Disable(); //not working??
         }

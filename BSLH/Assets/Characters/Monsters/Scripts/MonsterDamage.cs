@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
+using Characters.Monsters.Scripts.UtilityCore;
 using Characters.Playable.Scripts;
+using TMPro;
 using UnityEngine;
 
 namespace Characters.Monsters.Scripts
 {
     public class MonsterDamage : MonoBehaviour, IDamageStats
     {
+        private AIController _aiController;
+        
         //health
         public float maxHealth = 100;
         public float currentHealth;
@@ -30,6 +34,7 @@ namespace Characters.Monsters.Scripts
         
         private void Awake()
         {
+            _aiController = GetComponent<AIController>();
             currentHealth = maxHealth;
             _monsterName = gameObject.name;
             conditionType = IDamageStats.ConditionType.None; //set condition to none
@@ -38,10 +43,13 @@ namespace Characters.Monsters.Scripts
 
         private void TakeDamage(float damage)
         {
-            Debug.Log("monster took" + damage + "damage");
             // Subtract the calculated damage from the current health.
             currentHealth -= damage;
 
+            //floating text
+            var damageTextInstance =  Instantiate(_aiController.playerDamage.damageDoneTextPrefab,_aiController.playerDamage.damageDoneLocation.transform);
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = damage.ToString("F");
+            
             // Implement any additional logic for handling damage effects, death, etc.
             if (currentHealth <= 0f)
             {

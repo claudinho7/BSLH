@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Characters.Monsters.Scripts;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,8 +45,19 @@ namespace Characters.Playable.Scripts
         private string _equippedWeaponName;
         private string _equippedArmorName;
         public Transform weaponBone;
+        public GameObject weaponSlot;
+        public GameObject armorSlot;
+
 
         public Image blindingImage;
+        
+        //floating damage text
+        public GameObject damageReceivedTextPrefab;
+        public GameObject damageDoneTextPrefab;
+        public GameObject healthReceivedPrefab;
+        public GameObject damageDoneLocation;
+        public GameObject damageReceivedLocation;
+        public GameObject healthReceivedLocation;
 
         private void Awake()
         {
@@ -54,7 +66,7 @@ namespace Characters.Playable.Scripts
             
             //set gear
             AttachWeapon();
-            activeArmor = armoursList[0]; //needs changing
+            AttachArmor();
         }
 
         private void Start()
@@ -92,6 +104,10 @@ namespace Characters.Playable.Scripts
         {
             // Subtract the calculated damage from the current health.
             currentHealth -= damage;
+            
+            //floating text
+            var damageTextInstance =  Instantiate(damageReceivedTextPrefab, damageReceivedLocation.transform);
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = damage.ToString("F");
 
             // Implement any additional logic for handling death, etc.
             if (!(currentHealth <= 0f)) return;
@@ -286,6 +302,10 @@ namespace Characters.Playable.Scripts
         {
             switch (_equippedWeaponName)
             {
+                case "Fists(Clone)":
+                    baseDamage = 1f;
+                    damageType = IDamageStats.DamageType.Blunt;
+                    break;
                 case "Sword(Clone)":
                     baseDamage = 10f;
                     damageType = IDamageStats.DamageType.Slashing;
@@ -318,6 +338,7 @@ namespace Characters.Playable.Scripts
 
             armorType = _equippedArmorName switch
             {
+                "Naked" => IDamageStats.ArmorType.Light,
                 "Light" => IDamageStats.ArmorType.Light,
                 "Medium" => IDamageStats.ArmorType.Medium,
                 "Heavy" => IDamageStats.ArmorType.Heavy,
@@ -326,12 +347,32 @@ namespace Characters.Playable.Scripts
         }
 
         //attach weapon to bone
-        private void AttachWeapon()
+        public void AttachWeapon()
         {
             if (weaponsList != null && weaponBone != null)
             {
                 // Instantiate the prefab and make the attachedPrefab a child of the bone.
-                activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
+                if (weaponSlot.transform.childCount < 1)
+                {
+                    activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
+                }
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SwordIcon")
+                {
+                    activeWeapon = Instantiate(weaponsList[1], weaponBone, true);
+                } 
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon")
+                {
+                    activeWeapon = Instantiate(weaponsList[2], weaponBone, true);
+                }
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon")
+                {
+                    activeWeapon = Instantiate(weaponsList[3], weaponBone, true);
+                }
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon")
+                {
+                    activeWeapon = Instantiate(weaponsList[4], weaponBone, true);
+                }
+                
                 
                 // Reset the local position and rotation if needed.
                 activeWeapon.transform.localPosition = Vector3.zero;
@@ -340,6 +381,27 @@ namespace Characters.Playable.Scripts
             else
             {
                 Debug.LogError("Bone or prefab reference is missing.");
+            }
+        }
+
+        public void AttachArmor()
+        {
+            if (armoursList == null) return;
+            if (armorSlot.transform.childCount < 1)
+            {
+                activeArmor = armoursList[0];
+            }
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Light")
+            {
+                activeArmor = armoursList[1];
+            }
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Medium")
+            {
+                activeArmor = armoursList[2];
+            }
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Heavy")
+            {
+                activeArmor = armoursList[3];
             }
         }
 
@@ -490,10 +552,13 @@ namespace Characters.Playable.Scripts
             {
                 currentHealth = maxHealth;
             }
+            
+            //floating text
+            var damageTextInstance =  Instantiate(healthReceivedPrefab, healthReceivedLocation.transform);
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "+30";
         }
         #endregion
 
-        
         //look for collision and receive damage
         private void OnTriggerEnter(Collider other)
         {

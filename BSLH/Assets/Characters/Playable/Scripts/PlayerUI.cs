@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Characters.Playable.Scripts
@@ -12,14 +13,21 @@ namespace Characters.Playable.Scripts
         public Image currentStaminaBar;
         public GameObject interact;
         public GameObject map;
+        public GameObject pauseMenu;
+        public GameObject inventory;
+        public GameObject deathScreen;
+
+        private bool _canShowUI;
 
         private void Start()
         {
             _playerDamage = GetComponent<PlayerDamage>();
             _playerMovement = GetComponent<PlayerMovement>();
+            _canShowUI = true;
             
             map.SetActive(false);
             interact.SetActive(false);
+            pauseMenu.SetActive(false);
         }
 
         private void Update()
@@ -41,14 +49,72 @@ namespace Characters.Playable.Scripts
 
         public void OpenMap()
         {
+            if (!_canShowUI) return;
             map.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
+            _canShowUI = false;
         }
         
         public void CloseMap()
         {
             map.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
+            _canShowUI = true;
+        }
+
+        public void OpenInventory()
+        {
+            if (!_canShowUI) return;
+            Cursor.lockState = CursorLockMode.None;
+            inventory.SetActive(true);
+            _canShowUI = false;
+
+        }
+
+        public void CloseInventory()
+        {
+            inventory.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            _canShowUI = true;
+            _playerDamage.AttachArmor();
+            _playerDamage.AttachWeapon();
+        }
+        
+        public void Pause()
+        {
+            if (!_canShowUI) return;
+            pauseMenu.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            _canShowUI = false;
+            Time.timeScale = 0;
+        }
+
+        public void Resume()
+        {
+            pauseMenu.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Time.timeScale = 1;
+            _canShowUI = true;
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene(1);
+            Time.timeScale = 1;
+            deathScreen.SetActive(false);
+            _canShowUI = true;
+        }
+
+        public void DeathScreen()
+        {
+            deathScreen.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            _canShowUI = false;
         }
     }
 }
