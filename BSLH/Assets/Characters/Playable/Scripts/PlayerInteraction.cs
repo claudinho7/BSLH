@@ -16,17 +16,31 @@ namespace Characters.Playable.Scripts
         private void OnTriggerStay(Collider other)
         {
             // Check if the collision started with teleporter
-            if (!other.gameObject.CompareTag("Teleporter")) return;
-            _playerUI.ShowInteract();
-            _playerMovement.canInteractWithMap = true;
+            if (other.gameObject.CompareTag("Teleporter"))
+            {
+                _playerUI.ShowInteract();
+                _playerMovement.canInteractWithMap = true;
+            }
+            else if (other.gameObject.CompareTag("CraftingStation"))
+            {
+                _playerUI.ShowInteract();
+                _playerMovement.canInteractWithCraftingBench = true;
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             // Check if the collision ended with teleporter
-            if (!other.gameObject.CompareTag("Teleporter")) return;
-            _playerUI.HideInteract();
-            _playerMovement.canInteractWithMap = false;
+            if (other.gameObject.CompareTag("Teleporter"))
+            {
+                _playerUI.HideInteract();
+                _playerMovement.canInteractWithMap = false;
+            }
+            else if (other.gameObject.CompareTag("CraftingStation"))
+            {
+                _playerUI.HideInteract();
+                _playerMovement.canInteractWithCraftingBench = false;
+            }
         }
     }
 }

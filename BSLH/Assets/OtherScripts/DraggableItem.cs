@@ -12,7 +12,9 @@ namespace OtherScripts
         public bool isWeapon;
         public bool isArmor;
         public bool isEssence;
-    
+        public bool isLeather;
+        public bool isBone;
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             var parent = transform.parent;

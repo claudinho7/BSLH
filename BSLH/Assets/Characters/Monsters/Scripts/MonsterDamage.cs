@@ -1,16 +1,19 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Characters.Monsters.Scripts.UtilityCore;
 using Characters.Playable.Scripts;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Characters.Monsters.Scripts
 {
     public class MonsterDamage : MonoBehaviour, IDamageStats
     {
         private AIController _aiController;
-        
+        [SerializeField] private List<GameObject> droppedLoot;
+
         //health
         public float maxHealth = 100;
         public float currentHealth;
@@ -27,6 +30,9 @@ namespace Characters.Monsters.Scripts
         public float skillModifier = 1f; // to be added depending on the type of skill used
         
         private string _monsterName;
+        public GameObject projectile;
+        public GameObject projectileSpawner;
+        public GameObject vfxObj;
         
         //animation cache
         private Animator _animator;
@@ -55,6 +61,7 @@ namespace Characters.Monsters.Scripts
             {
                 // Entity is defeated, you can destroy or disable it, play death animation, etc.
                 _animator.SetTrigger(Died);
+                StartCoroutine(DiedTimer());
             }
         }
         
@@ -230,6 +237,7 @@ namespace Characters.Monsters.Scripts
                 var oldBaseDamage = baseDamage;
                 // Apply rage
                 baseDamage += 10f;
+                var vfx = Instantiate(vfxObj, transform);
                 Debug.Log("is enraged");
 
                 // Wait for the tick interval.
@@ -237,6 +245,7 @@ namespace Characters.Monsters.Scripts
 
                 elapsedTime = 10f;
                 baseDamage = oldBaseDamage;
+                Destroy(vfx);
             }
         }
 
@@ -266,14 +275,17 @@ namespace Characters.Monsters.Scripts
                     hasCondition = false;
                     conditionType = IDamageStats.ConditionType.None;
                     break;
-                case "Satyr": //charge
+                case "Satyr": //headbutt
                     skillModifier = 4f;
                     hasCondition = true;
-                    conditionDamage = 0;
-                    conditionTime = 3;
-                    conditionType = IDamageStats.ConditionType.Stagger;
+                    conditionDamage = 15;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.Decay;
                     break;
             }
+            //spawn projectile
+            var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
+            newProjectile.transform.position = projectileSpawner.transform.position;
         }
 
         public void DoSpecialMeleeAttack()
@@ -294,7 +306,7 @@ namespace Characters.Monsters.Scripts
                     conditionDamage = 4;
                     conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
-                    currentHealth += 5f; //heal for 5
+                    currentHealth += 20f; //heal for 20
                     //check to not go above max health
                     if (currentHealth >= maxHealth)
                     {
@@ -329,13 +341,19 @@ namespace Characters.Monsters.Scripts
                     conditionDamage = 0;
                     conditionTime = 3;
                     conditionType = IDamageStats.ConditionType.Stagger;
+                    _aiController.Movement.MoveInMelee();
                     break;
                 case "Satyr": //decay magic
                     skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 5;
-                    conditionTime = 5;
+                    conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Decay;
+                    
+                    //spawn projectile
+                    var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
+                    newProjectile.transform.position = projectileSpawner.transform.position;
+                    
                     break;
             }
         }
@@ -362,7 +380,10 @@ namespace Characters.Monsters.Scripts
                     skillModifier = 1f;
                     hasCondition = false;
                     conditionType = IDamageStats.ConditionType.None;
-                    currentHealth += 20f; //heal for 20 every ultimate
+                    currentHealth += 80f; //heal for 80 every ultimate
+                    
+                    //playVfx
+                    Instantiate(vfxObj, transform);
                     break;
             }
         }
@@ -384,5 +405,45 @@ namespace Characters.Monsters.Scripts
             ApplyCondition(damageScript.conditionDamage, damageScript.conditionTime, damageScript.conditionType);
             damageScript.hasCondition = false;
         }
+
+        private IEnumerator DiedTimer()
+        {
+            var elapsedTime = 0f;
+            const float delayBetweenSpawns = 0.1f;
+
+            while (elapsedTime < 5f)
+            {
+                foreach (var loot in droppedLoot)
+                {
+                    // Get the position of the spawning object
+                    var spawnPosition = transform.position;
+
+                    // Calculate random angle in radians
+                    var randomAngle = Random.Range(0f, 2f * Mathf.PI);
+
+                    // Calculate random distance from the main position
+                    var randomDistance = Random.Range(0f, 2f);
+
+                    // Convert polar coordinates to Cartesian coordinates
+                    spawnPosition.x += randomDistance * Mathf.Cos(randomAngle);
+                    spawnPosition.z += randomDistance * Mathf.Sin(randomAngle);
+                    spawnPosition.y += 1.5f;
+
+                    // Instantiate the object at the modified spawn position
+                    Instantiate(loot, spawnPosition, Quaternion.identity);
+
+                    // Wait for the specified delay between spawns
+                    yield return new WaitForSeconds(delayBetweenSpawns);
+                }
+
+                // Wait for the tick interval.
+                yield return new WaitForSeconds(5f);
+                elapsedTime += 5f;
+            }
+
+            // Destroy the gameObject after all spawns are done
+            Destroy(gameObject);
+        }
+
     }
 }

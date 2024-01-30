@@ -70,10 +70,10 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
             #region AI Vision
             // Calculate the direction from AI to player
-            var position = transform.position;
+            var position = transform.position + new Vector3(0, 1.2f, 0);
             if (playerTransform != null)
             {
-                _playerPosition = playerTransform.position;
+                _playerPosition = playerTransform.position + new Vector3(0, 1.2f, 0);
             }
             else
             {
@@ -93,6 +93,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
             // Perform the raycast
             if (Physics.Raycast(ray, out var hit, ProximityDistance))
             {
+                Debug.Log(hit.collider.name);
                 // Check if the hit object is the player
                 if (hit.collider.CompareTag("Player"))
                 {
@@ -100,15 +101,15 @@ namespace Characters.Monsters.Scripts.UtilityCore
                     canHitMelee = true;
                     canHitRanged = true;
                     isPatrolling = false; //stop patrolling
-                    //Debug.Log("Player is in line of sight!");
+                    Debug.Log("Player is in line of sight!");
                 }
                 else
                 {
                     // Something else is in between the AI and the player
                     canHitRanged = false;
                     isPatrolling = false; //stop patrolling
-                    //Debug.Log("Something is blocking the line of sight.");
-                    canHitMelee = distanceToPlayer < 3f; //can hit melee even if not in LOS within 3f
+                    Debug.Log("Something is blocking the line of sight.");
+                    canHitMelee = distanceToPlayer < 2f; //can hit melee even if not in LOS within 2f
                 }
             }
             else

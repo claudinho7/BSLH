@@ -5,14 +5,14 @@ namespace Characters.Monsters.Scripts.UtilityCore
     public abstract class Action : ScriptableObject
     {
         public string actionName;
-        public float _score;
+        public float score;
         
         public Consideration[] considerations;
         
         public float Score
         {
-            get => _score;
-            set => _score = Mathf.Clamp01(value);
+            get => score;
+            set => score = Mathf.Clamp01(value);
         }
         
         public virtual void Awake()

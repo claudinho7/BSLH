@@ -1,4 +1,5 @@
 using System.Collections;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,9 @@ namespace Characters.Playable.Scripts
         private GameObject _monster;
 
         [SerializeField] private float cameraRotationSpeed = 3f;
+        public GameObject freeLookCamera;
+        public GameObject lockedCamera;
+        public CinemachineTargetGroup targetGroup;
         private Vector2 _playerMovement;
         private Quaternion _playerRotation;
         private bool _groundedPlayer;
@@ -33,6 +37,7 @@ namespace Characters.Playable.Scripts
         public bool canExecute;
         public bool canMove;
         public bool canInteractWithMap;
+        public bool canInteractWithCraftingBench;
 
         //animation cache
         private static readonly int Jump = Animator.StringToHash("Jump");
@@ -213,10 +218,11 @@ namespace Characters.Playable.Scripts
         
         public void DoBandage(InputAction.CallbackContext context)
         {
-            if (!context.performed || !(stamina >= 5f) || !canExecute) return;
+            if (!context.performed || !(stamina >= 5f) || !canExecute || _playerDamage.bandageCount <= 0) return;
             _animator.SetTrigger(Bandage);
-            CalculateStamina(0f,5f);
+            CalculateStamina(0f, 5f);
             _playerDamage.DoHeal();
+            _playerDamage.bandageCount -= 1;
         }
         
         public void Inventory(InputAction.CallbackContext context)
@@ -229,18 +235,33 @@ namespace Characters.Playable.Scripts
         
         public void Interact(InputAction.CallbackContext context)
         {
-            if (!context.performed || !canExecute || !canInteractWithMap) return;
-            _playerUI.OpenMap();
+            switch (context.performed)
+            {
+                case true when canExecute && canInteractWithMap:
+                    _playerUI.OpenMap();
+                    break;
+                case true when canExecute && canInteractWithCraftingBench:
+                    _playerUI.OpenCrafting();
+                    break;
+            }
         }
 
         public void LockTarget(InputAction.CallbackContext context)
         {
-            _playerDamage.targetLocked = context.performed switch
+            switch (context.performed)
             {
-                true when (!_playerDamage.targetLocked && _monster != null) => true,
-                true when (_playerDamage.targetLocked && _monster != null) => false,
-                _ => _playerDamage.targetLocked
-            };
+                case true when (!_playerDamage.targetLocked && _monster != null):
+                    _playerDamage.targetLocked = true;
+                    lockedCamera.gameObject.SetActive(true);
+                    freeLookCamera.gameObject.SetActive(false);
+                    targetGroup.m_Targets[1].target = _monster.transform;
+                    break;
+                case true when (_playerDamage.targetLocked && _monster != null):
+                    _playerDamage.targetLocked = false;
+                    lockedCamera.gameObject.SetActive(false);
+                    freeLookCamera.gameObject.SetActive(true);
+                    break;
+            }
         }
         
         public void Pause(InputAction.CallbackContext context)
@@ -334,6 +355,13 @@ namespace Characters.Playable.Scripts
         private string _sceneToBeLoaded;
         private Vector3 _locationToBeTeleported;
 
+        public void HubTeleport()
+        {
+            _sceneToBeLoaded = "S_Hub";
+            _locationToBeTeleported = new Vector3(23, 6, 7);
+            StartCoroutine(LoadScene());
+        }
+        
         public void Arena1Teleport()
         {
             _sceneToBeLoaded = "S_Area1";
@@ -357,7 +385,7 @@ namespace Characters.Playable.Scripts
         
         public void Arena4Teleport()
         {
-            _sceneToBeLoaded = "Claudiu's Playground";
+            _sceneToBeLoaded = "S_Arena4";
             _locationToBeTeleported = new Vector3(20, 0, 20);
             StartCoroutine(LoadScene());
         }
@@ -373,6 +401,7 @@ namespace Characters.Playable.Scripts
             // Wait until the last operation fully loads to return anything
             while (!asyncLoad.isDone)
             {
+                _playerUI.LoadingScreenOn();
                 yield return null;
             }
 
@@ -383,6 +412,7 @@ namespace Characters.Playable.Scripts
             _playerUI.HideInteract();
             canInteractWithMap = false;
             _monster = GameObject.FindGameObjectWithTag("Monster");
+            _playerUI.LoadingScreenOff();
             
             // Unload the previous Scene
             SceneManager.UnloadSceneAsync(currentScene);

@@ -33,11 +33,13 @@ namespace Characters.Playable.Scripts
         public bool hasCondition; //check if damage over time is applied
         public float skillModifier = 1f; // to be added depending on the type of skill used
         public bool targetLocked;
+        private bool _iFrames;
 
 
         //gear stuff
         public GameObject[] weaponsList;
         public GameObject activeWeapon; //equipped weapon
+        public GameObject activeShield; //equipped weapon
         private GameObject _previousActiveWeapon;
         public GameObject[] armoursList;
         public GameObject activeArmor; //equipped armor
@@ -45,8 +47,10 @@ namespace Characters.Playable.Scripts
         private string _equippedWeaponName;
         private string _equippedArmorName;
         public Transform weaponBone;
+        public Transform shieldBone;
         public GameObject weaponSlot;
         public GameObject armorSlot;
+        public int bandageCount = 5;
 
 
         public Image blindingImage;
@@ -302,7 +306,7 @@ namespace Characters.Playable.Scripts
         {
             switch (_equippedWeaponName)
             {
-                case "Fists(Clone)":
+                case "Fist(Clone)":
                     baseDamage = 1f;
                     damageType = IDamageStats.DamageType.Blunt;
                     break;
@@ -349,34 +353,55 @@ namespace Characters.Playable.Scripts
         //attach weapon to bone
         public void AttachWeapon()
         {
-            if (weaponsList != null && weaponBone != null)
+            if (weaponsList != null && weaponBone != null && shieldBone != null)
             {
+                //destroy previous prefab
+                if (weaponBone.childCount > 0)
+                {
+                    Destroy(weaponBone.GetChild(0).gameObject);
+                    
+                    if (shieldBone.childCount > 0)
+                    {
+                        Destroy(shieldBone.GetChild(0).gameObject);
+                    }
+                }
+                
                 // Instantiate the prefab and make the attachedPrefab a child of the bone.
                 if (weaponSlot.transform.childCount < 1)
                 {
                     activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
+                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
                 }
-                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SwordIcon")
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SwordIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[1], weaponBone, true);
+                    activeShield = Instantiate(weaponsList[2], shieldBone, true);
                 } 
-                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon")
-                {
-                    activeWeapon = Instantiate(weaponsList[2], weaponBone, true);
-                }
-                else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon")
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[3], weaponBone, true);
+                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
                 }
-                else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon")
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[4], weaponBone, true);
+                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                }
+                else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon(Clone)")
+                {
+                    activeWeapon = Instantiate(weaponsList[5], weaponBone, true);
+                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
                 }
                 
                 
-                // Reset the local position and rotation if needed.
-                activeWeapon.transform.localPosition = Vector3.zero;
-                //attachedPrefab.transform.localRotation = Quaternion.identity;
+                // Adjust the local position to raise the weapon in the hand.
+                var offsetWeapon = new Vector3(0f, 1f, 0f);
+                var offsetShield = new Vector3(0f, 0.4f, 0.3f); 
+                activeWeapon.transform.localPosition = offsetWeapon;
+                activeShield.transform.localPosition = offsetShield;
+
+                // Reset the local rotation if needed.
+                activeWeapon.transform.localRotation = Quaternion.identity;
             }
             else
             {
@@ -391,15 +416,15 @@ namespace Characters.Playable.Scripts
             {
                 activeArmor = armoursList[0];
             }
-            else if (armorSlot.transform.GetChild(0).gameObject.name == "Light")
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Light(Clone)")
             {
                 activeArmor = armoursList[1];
             }
-            else if (armorSlot.transform.GetChild(0).gameObject.name == "Medium")
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Medium(Clone)")
             {
                 activeArmor = armoursList[2];
             }
-            else if (armorSlot.transform.GetChild(0).gameObject.name == "Heavy")
+            else if (armorSlot.transform.GetChild(0).gameObject.name == "Heavy(Clone)")
             {
                 activeArmor = armoursList[3];
             }
@@ -558,18 +583,34 @@ namespace Characters.Playable.Scripts
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "+30";
         }
         #endregion
+        
+        //iFrames
+        public void StartIFrames()
+        {
+            _iFrames = true;
+        }
+
+        public void StopIFrames()
+        {
+            _iFrames = false;
+        }
 
         //look for collision and receive damage
         private void OnTriggerEnter(Collider other)
         {
             // Check if the collision is with a monster weapon.
             if (other.gameObject.layer != LayerMask.NameToLayer("MonsterWeapon")) return;
+            
+            //check if player has iFrames
+            if (_iFrames) return;
+
             // Access the damage script on the colliding object parent.
             var damageScript = other.gameObject.GetComponentInParent<MonsterDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.
-            CalculateTotalDamageReceived(damageScript.baseDamage + damageScript.skillModifier, damageScript.damageType);
+            CalculateTotalDamageReceived(damageScript.baseDamage + damageScript.skillModifier,
+                damageScript.damageType);
 
             //if the skill used by enemy has a condition add it and make it false
             if (!damageScript.hasCondition) return;

@@ -9,7 +9,8 @@ namespace OtherScripts
         public bool isArmorSlot;
         public bool isEssenceSlot;
         public bool isInventorySlot;
-        
+        public bool isDestroySlot;
+
         public void OnDrop(PointerEventData eventData)
         {
             if (transform.childCount != 0) return;
@@ -31,6 +32,11 @@ namespace OtherScripts
             else if (draggableItem.isEssence && isEssenceSlot)
             {
                 draggableItem.parentAfterDrag = transform;
+            }
+            else if (isDestroySlot)
+            {
+                draggableItem.parentAfterDrag = transform; 
+                Destroy(draggableItem.gameObject);
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Characters.Playable.Scripts;
 using UnityEngine;
@@ -46,14 +45,9 @@ namespace Characters.Monsters.Scripts.UtilityCore
             else
             {
                 // PlayerDamage is already set, or player search is in progress.
-                if (playerDamage == null)
-                {
-                    Debug.Log("PlayerDamage not set; still searching for the player...");
-                }
-                else
-                {
-                    Debug.Log("PlayerDamage already set.");
-                }
+                Debug.Log(playerDamage == null
+                    ? "PlayerDamage not set; still searching for the player..."
+                    : "PlayerDamage already set.");
             }
         }
 
@@ -129,7 +123,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         public IEnumerator DoNormalRangedRoutine()
         {
-            while (Movement.distanceToPlayer is < 5f or >12f)
+            while (Movement.distanceToPlayer is < 5f or >11f)
             {
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
@@ -155,7 +149,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         public IEnumerator DoSpecialRangedRoutine()
         {
-            while (Movement.distanceToPlayer is < 5f or >12f)
+            while (Movement.distanceToPlayer is < 5f or >11f)
             {
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance
@@ -168,7 +162,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
         
         public IEnumerator DoUltimateRoutine()
         {
-            while (Movement.distanceToPlayer > 12f)
+            while (Movement.distanceToPlayer > 11f)
             {
                 Movement.MoveInRanged();
                 yield return new WaitForSeconds(0.2f); // Yielding .2 seconds to save performance

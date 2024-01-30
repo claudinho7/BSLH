@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,6 +17,9 @@ namespace Characters.Playable.Scripts
         public GameObject pauseMenu;
         public GameObject inventory;
         public GameObject deathScreen;
+        public GameObject bandageTextObj;
+        public GameObject loadingScreen;
+        public GameObject craftingUI;
 
         private bool _canShowUI;
 
@@ -35,6 +39,8 @@ namespace Characters.Playable.Scripts
             maxHealthBar.fillAmount = _playerDamage.maxHealth / 300f;
             currentHealthBar.fillAmount = _playerDamage.currentHealth / 300f;
             currentStaminaBar.fillAmount = _playerMovement.stamina / 100f;
+
+            bandageTextObj.GetComponent<TextMeshProUGUI>().text = _playerDamage.bandageCount.ToString("0");
         }
 
         public void ShowInteract()
@@ -116,5 +122,33 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
         }
+
+        public void LoadingScreenOn()
+        {
+            loadingScreen.SetActive(true);
+        }
+
+        public void LoadingScreenOff()
+        {
+            loadingScreen.SetActive(false);
+        }
+
+        //crafting
+        #region Crafting
+        public void OpenCrafting()
+        {
+            if (!_canShowUI) return;
+            craftingUI.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            _canShowUI = false;
+        }
+        
+        public void CloseCrafting()
+        {
+            craftingUI.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            _canShowUI = true;
+        }
+        #endregion
     }
 }

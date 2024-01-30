@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Monster
   - Teleporter
+  - Projectile
+  - Item
+  - CraftingStation
   layers:
   - Default
   - TransparentFX
