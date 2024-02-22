@@ -20,8 +20,10 @@ namespace Characters.Playable.Scripts
         public GameObject bandageTextObj;
         public GameObject loadingScreen;
         public GameObject craftingUI;
-
+        public GameObject timerObj;
+        
         private bool _canShowUI;
+        public int timer;
 
         private void Start()
         {
@@ -32,6 +34,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(false);
             interact.SetActive(false);
             pauseMenu.SetActive(false);
+            timer = 16;
         }
 
         private void Update()
@@ -41,8 +44,19 @@ namespace Characters.Playable.Scripts
             currentStaminaBar.fillAmount = _playerMovement.stamina / 100f;
 
             bandageTextObj.GetComponent<TextMeshProUGUI>().text = _playerDamage.bandageCount.ToString("0");
-        }
 
+            if (timer is < 16 and > 0)
+            {
+                timerObj.SetActive(true);
+                timerObj.GetComponent<TextMeshProUGUI>().text = timer.ToString("0");
+            }
+            else
+            {
+                timerObj.SetActive(false);
+            }
+        }
+        
+        
         public void ShowInteract()
         {
             interact.SetActive(true);
@@ -59,6 +73,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
+            Time.timeScale = 0;
         }
         
         public void CloseMap()
@@ -66,6 +81,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
+            Time.timeScale = 1;
         }
 
         public void OpenInventory()
@@ -74,7 +90,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.None;
             inventory.SetActive(true);
             _canShowUI = false;
-
+            Time.timeScale = 0;
         }
 
         public void CloseInventory()
@@ -84,6 +100,7 @@ namespace Characters.Playable.Scripts
             _canShowUI = true;
             _playerDamage.AttachArmor();
             _playerDamage.AttachWeapon();
+            Time.timeScale = 1;
         }
         
         public void Pause()
@@ -141,6 +158,7 @@ namespace Characters.Playable.Scripts
             craftingUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
+            Time.timeScale = 0;
         }
         
         public void CloseCrafting()
@@ -148,6 +166,7 @@ namespace Characters.Playable.Scripts
             craftingUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
+            Time.timeScale = 1;
         }
         #endregion
     }

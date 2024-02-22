@@ -77,7 +77,7 @@ namespace Characters.Playable.Scripts
             _groundedPlayer = _controller.isGrounded;
             
             _playerMovement = Vector2.SmoothDamp(_playerMovement, _targetMovementVector, ref _movementSmoothVelocity, movementInputSmoothTime);
-            
+
             //movement && sprinting
             switch (_isSprinting && stamina >= 8f)
             {
@@ -218,7 +218,7 @@ namespace Characters.Playable.Scripts
         
         public void DoBandage(InputAction.CallbackContext context)
         {
-            if (!context.performed || !(stamina >= 5f) || !canExecute || _playerDamage.bandageCount <= 0) return;
+            if (!context.performed || !(stamina >= 5f) || !canExecute || _playerDamage.bandageCount <= 0 || Time.timeScale == 0) return;
             _animator.SetTrigger(Bandage);
             CalculateStamina(0f, 5f);
             _playerDamage.DoHeal();
@@ -256,7 +256,7 @@ namespace Characters.Playable.Scripts
                     freeLookCamera.gameObject.SetActive(false);
                     targetGroup.m_Targets[1].target = _monster.transform;
                     break;
-                case true when (_playerDamage.targetLocked && _monster != null):
+                case true when _playerDamage.targetLocked:
                     _playerDamage.targetLocked = false;
                     lockedCamera.gameObject.SetActive(false);
                     freeLookCamera.gameObject.SetActive(true);
@@ -355,9 +355,9 @@ namespace Characters.Playable.Scripts
         private string _sceneToBeLoaded;
         private Vector3 _locationToBeTeleported;
 
-        public void HubTeleport()
+        private void HubTeleport()
         {
-            _sceneToBeLoaded = "S_Hub";
+            _sceneToBeLoaded = "S_HubNew";
             _locationToBeTeleported = new Vector3(23, 6, 7);
             StartCoroutine(LoadScene());
         }
@@ -419,5 +419,29 @@ namespace Characters.Playable.Scripts
         }
 
         #endregion
+
+
+        public void TriggerTeleportBack()
+        {
+            StartCoroutine(TeleportBack());
+        }
+        
+        private IEnumerator TeleportBack()
+        {
+            var elapsedTime = 0f;
+
+            while (elapsedTime < 15f)
+            {
+                _playerUI.timer -= 1;
+                
+                // Wait for the tick interval.
+                yield return new WaitForSeconds(1f);
+                elapsedTime += 1f;
+            }
+
+            // Teleport player to hub
+            HubTeleport();
+            _playerUI.timer = 16;
+        }
     }
 }

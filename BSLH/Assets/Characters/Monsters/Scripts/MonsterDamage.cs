@@ -49,6 +49,8 @@ namespace Characters.Monsters.Scripts
 
         private void TakeDamage(float damage)
         {
+            if (currentHealth <= 0) return;
+            
             // Subtract the calculated damage from the current health.
             currentHealth -= damage;
 
@@ -380,7 +382,7 @@ namespace Characters.Monsters.Scripts
                     skillModifier = 1f;
                     hasCondition = false;
                     conditionType = IDamageStats.ConditionType.None;
-                    currentHealth += 80f; //heal for 80 every ultimate
+                    currentHealth += 40f; //heal for 40 every ultimate
                     
                     //playVfx
                     Instantiate(vfxObj, transform);
@@ -409,7 +411,7 @@ namespace Characters.Monsters.Scripts
         private IEnumerator DiedTimer()
         {
             var elapsedTime = 0f;
-            const float delayBetweenSpawns = 0.1f;
+            const float delayBetweenSpawns = 0.3f;
 
             while (elapsedTime < 5f)
             {
@@ -436,11 +438,12 @@ namespace Characters.Monsters.Scripts
                     yield return new WaitForSeconds(delayBetweenSpawns);
                 }
 
+                GameObject.Find("Player").GetComponent<PlayerMovement>().TriggerTeleportBack();
+                
                 // Wait for the tick interval.
                 yield return new WaitForSeconds(5f);
                 elapsedTime += 5f;
             }
-
             // Destroy the gameObject after all spawns are done
             Destroy(gameObject);
         }
