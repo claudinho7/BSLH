@@ -9,6 +9,7 @@ namespace Characters.Playable.Scripts
     public class PlayerMovement : MonoBehaviour
     {
         private Animator _animator;
+        public RuntimeAnimatorController[] animatorController;
         private CharacterController _controller;
         private Transform _cameraMain;
         private PlayerInput _playerInput;
@@ -58,6 +59,7 @@ namespace Characters.Playable.Scripts
             _playerInput = new PlayerInput();
             _playerDamage = GetComponent<PlayerDamage>();
             _animator = GetComponent<Animator>();
+            _animator.runtimeAnimatorController = animatorController[0];
             _controller = GetComponent<CharacterController>();
             _playerUI = GetComponent<PlayerUI>();
 
@@ -303,6 +305,11 @@ namespace Characters.Playable.Scripts
         
         //HandleAnimations
         #region AnimationEvents
+
+        public void AnimControllerChange(int value)
+        {
+            _animator.runtimeAnimatorController = animatorController[value];
+        }
         
         public void AnimationStarted()
         {
@@ -418,9 +425,6 @@ namespace Characters.Playable.Scripts
             SceneManager.UnloadSceneAsync(currentScene);
         }
 
-        #endregion
-
-
         public void TriggerTeleportBack()
         {
             StartCoroutine(TeleportBack());
@@ -443,5 +447,7 @@ namespace Characters.Playable.Scripts
             HubTeleport();
             _playerUI.timer = 16;
         }
+        
+        #endregion
     }
 }

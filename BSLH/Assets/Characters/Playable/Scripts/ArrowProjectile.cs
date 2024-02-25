@@ -1,28 +1,20 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Characters.Monsters.Scripts
+namespace Characters.Playable.Scripts
 {
-    public class EnemyProjectile : MonoBehaviour
+    public class ArrowProjectile : MonoBehaviour
     {
-        private Vector3 _target;
-        public GameObject splashVFX;
+        public GameObject hitVFX;
+
         private void Start()
         {
-            var objects = GameObject.FindGameObjectWithTag("Player");
-            _target = objects.transform.position + new Vector3(0, 1, 0);
-
             StartCoroutine(LifeTime());
-        }
-
-        private void Update()
-        {
-            transform.position = Vector3.MoveTowards(transform.position, _target, 20 * Time.deltaTime);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            var newVfx = Instantiate(splashVFX, transform.parent);
+            var newVfx = Instantiate(hitVFX, transform.parent);
             newVfx.transform.position = transform.position;
                 
             Destroy(gameObject);
@@ -32,7 +24,7 @@ namespace Characters.Monsters.Scripts
         {
             var time = 0;
 
-            while (time <= 5)
+            while (time <= 15)
             {
                 time += 1;
                 yield return new WaitForSeconds(1);

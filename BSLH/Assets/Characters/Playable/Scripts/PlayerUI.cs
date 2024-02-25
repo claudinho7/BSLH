@@ -74,6 +74,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
             Time.timeScale = 0;
+            _playerMovement.canExecute = false;
         }
         
         public void CloseMap()
@@ -82,6 +83,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
             Time.timeScale = 1;
+            _playerMovement.canExecute = true;
         }
 
         public void OpenInventory()
@@ -91,6 +93,7 @@ namespace Characters.Playable.Scripts
             inventory.SetActive(true);
             _canShowUI = false;
             Time.timeScale = 0;
+            _playerMovement.canExecute = false;
         }
 
         public void CloseInventory()
@@ -101,6 +104,7 @@ namespace Characters.Playable.Scripts
             _playerDamage.AttachArmor();
             _playerDamage.AttachWeapon();
             Time.timeScale = 1;
+            _playerMovement.canExecute = true;
         }
         
         public void Pause()
@@ -110,6 +114,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
             Time.timeScale = 0;
+            _playerMovement.canExecute = false;
         }
 
         public void Resume()
@@ -118,6 +123,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1;
             _canShowUI = true;
+            _playerMovement.canExecute = true;
         }
 
         public void QuitGame()
@@ -159,6 +165,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
             Time.timeScale = 0;
+            _playerMovement.canExecute = false;
         }
         
         public void CloseCrafting()
@@ -167,6 +174,7 @@ namespace Characters.Playable.Scripts
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
             Time.timeScale = 1;
+            _playerMovement.canExecute = true;
         }
         #endregion
     }

@@ -51,6 +51,8 @@ namespace Characters.Playable.Scripts
         public GameObject weaponSlot;
         public GameObject armorSlot;
         public int bandageCount = 5;
+        public Transform projectileSpawnLoc;
+        public GameObject projectileObj;
 
 
         public Image blindingImage;
@@ -69,8 +71,8 @@ namespace Characters.Playable.Scripts
             currentHealth = maxHealth;
             
             //set gear
-            AttachWeapon();
-            AttachArmor();
+            //AttachWeapon();
+            //AttachArmor();
         }
 
         private void Start()
@@ -82,7 +84,7 @@ namespace Characters.Playable.Scripts
             _equippedArmorName = activeArmor.name;
             SwitchGear(); //trigger gear update on start
             conditionType = IDamageStats.ConditionType.None; //set condition to none
-            activeWeapon.GetComponent<BoxCollider>().enabled = false;//set the weapon collision off at start
+            activeWeapon.GetComponent<BoxCollider>().enabled = false; //set the weapon collision off at start
         }
 
         private void Update()
@@ -322,20 +324,8 @@ namespace Characters.Playable.Scripts
                     baseDamage = 17f;
                     damageType = IDamageStats.DamageType.Blunt;
                     break;
-                case "GreatSword(Clone)":
-                    baseDamage = 14f;
-                    damageType = IDamageStats.DamageType.Slashing;
-                    break;
-                case "Daggers(Clone)":
-                    baseDamage = 8f;
-                    damageType = IDamageStats.DamageType.Slashing;
-                    break;
                 case "Crossbow(Clone)":
                     baseDamage = 7f;
-                    damageType = IDamageStats.DamageType.Piercing;
-                    break;
-                case "Bow(Clone)":
-                    baseDamage = 5f;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
             }
@@ -371,26 +361,31 @@ namespace Characters.Playable.Scripts
                 {
                     activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
                     activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    _playerMovement.AnimControllerChange(0);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "SwordIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[1], weaponBone, true);
                     activeShield = Instantiate(weaponsList[2], shieldBone, true);
+                    _playerMovement.AnimControllerChange(0);
                 } 
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[3], weaponBone, true);
                     activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    _playerMovement.AnimControllerChange(1);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[4], weaponBone, true);
                     activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    _playerMovement.AnimControllerChange(2);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[5], weaponBone, true);
                     activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    _playerMovement.AnimControllerChange(3);
                 }
                 
                 
@@ -567,6 +562,12 @@ namespace Characters.Playable.Scripts
                     conditionType = IDamageStats.ConditionType.None;
                     break;
             }
+        }
+
+        public void SpawnProjectile()
+        {
+            var projectile = Instantiate(projectileObj, projectileSpawnLoc.position, projectileSpawnLoc.rotation);
+            projectile.GetComponent<Rigidbody>().velocity = projectileSpawnLoc.forward * 40;
         }
 
         public void DoHeal()

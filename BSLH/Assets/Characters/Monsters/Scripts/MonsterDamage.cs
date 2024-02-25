@@ -61,7 +61,6 @@ namespace Characters.Monsters.Scripts
             // Implement any additional logic for handling damage effects, death, etc.
             if (currentHealth <= 0f)
             {
-                // Entity is defeated, you can destroy or disable it, play death animation, etc.
                 _animator.SetTrigger(Died);
                 StartCoroutine(DiedTimer());
             }
@@ -396,7 +395,7 @@ namespace Characters.Monsters.Scripts
             // Check if the collision is with a player weapon.
             if (other.gameObject.layer != LayerMask.NameToLayer("PlayerWeapon")) return;
             // Access the damage script on the colliding object parent.
-            var damageScript = other.gameObject.GetComponentInParent<PlayerDamage>();
+            var damageScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.
