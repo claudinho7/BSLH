@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5715674163907654683}
   - component: {fileID: 7483686660384652967}
   - component: {fileID: 6068812149924282831}
+  - component: {fileID: 6245424380645342548}
   m_Layer: 5
   m_Name: TargetLock
   m_TagString: Untagged
@@ -75,6 +76,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6245424380645342548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415354801497659325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886edbda33860f44f96423955cbd8fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2687396107231051038
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,6 +203,7 @@ GameObject:
   - component: {fileID: 5129275768414462955}
   - component: {fileID: 7367939164024863019}
   - component: {fileID: 5167257203063794090}
+  - component: {fileID: 2563710050357115736}
   m_Layer: 5
   m_Name: MaxHealth
   m_TagString: Untagged
@@ -254,6 +268,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2563710050357115736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7044918042747089849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886edbda33860f44f96423955cbd8fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7239590657394423389
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +291,7 @@ GameObject:
   - component: {fileID: 7255144380707825945}
   - component: {fileID: 5986960076022786457}
   - component: {fileID: 1756992868528500608}
+  - component: {fileID: 5454488773045729224}
   m_Layer: 5
   m_Name: CurrentHealth
   m_TagString: Untagged
@@ -329,6 +356,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5454488773045729224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7239590657394423389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886edbda33860f44f96423955cbd8fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8686607781960146668
 GameObject:
   m_ObjectHideFlags: 0

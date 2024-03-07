@@ -8,29 +8,33 @@ namespace Characters.Playable.Scripts
 { 
     public class PlayerMovement : MonoBehaviour
     {
+        [Header("Controllers")]
         private Animator _animator;
         public RuntimeAnimatorController[] animatorController;
         private CharacterController _controller;
-        private Transform _cameraMain;
         private PlayerInput _playerInput;
         private PlayerDamage _playerDamage;
         private PlayerUI _playerUI;
         private GameObject _monster;
+        
+        private Vector2 _playerMovement;
+        private bool _groundedPlayer;
+        private bool _inventoryOpened;
 
-        [SerializeField] private float cameraRotationSpeed = 3f;
+        //camera stuff
+        [Header("Camera Settings")]
+        private Transform _cameraMain;
+        private Vector2 _targetMovementVector = Vector2.zero;
+        [SerializeField] private float rotationSpeed;
+        [SerializeField][Range(0.001f, 2f)]
+        private float movementInputSmoothTime;
+        private Quaternion _playerRotation;
         public GameObject freeLookCamera;
         public GameObject lockedCamera;
         public CinemachineTargetGroup targetGroup;
-        private Vector2 _playerMovement;
-        private Quaternion _playerRotation;
-        private bool _groundedPlayer;
-        private bool _inventoryOpened;
-        
-        private Vector2 _targetMovementVector = Vector2.zero;
-        [SerializeField][Range(0.001f, 2f)]
-        private float movementInputSmoothTime;
 
         //stats
+        [Header("Stats")]
         public float stamina = 100f;
         [SerializeField] private float staminaRechargeRate;
         private bool _isSprinting;
@@ -62,9 +66,9 @@ namespace Characters.Playable.Scripts
             _animator.runtimeAnimatorController = animatorController[0];
             _controller = GetComponent<CharacterController>();
             _playerUI = GetComponent<PlayerUI>();
-
+            
             if (Camera.main != null) _cameraMain = Camera.main.transform;
-
+            
             canExecute = true;
             canMove = true;
         }
@@ -116,7 +120,7 @@ namespace Characters.Playable.Scripts
                     stamina = 100f;
                 }
             }
-
+            
             //target lock and body rotation
             if (_playerDamage.targetLocked && _monster != null)
             { 
@@ -128,7 +132,7 @@ namespace Characters.Playable.Scripts
                 
                 _playerRotation = Quaternion.Euler(0f, targetYRotation, 0f);
                 transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
-                    Time.deltaTime * cameraRotationSpeed);
+                    Time.deltaTime * rotationSpeed);
             }
             else
             {
@@ -136,7 +140,7 @@ namespace Characters.Playable.Scripts
                 if (_playerMovement == Vector2.zero) return;
                 _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
                 transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
-                    Time.deltaTime * cameraRotationSpeed);
+                    Time.deltaTime * rotationSpeed);
             }
         }
 
