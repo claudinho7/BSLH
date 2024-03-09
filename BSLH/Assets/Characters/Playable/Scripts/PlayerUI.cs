@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,6 +26,13 @@ namespace Characters.Playable.Scripts
         
         private bool _canShowUI;
         public int timer;
+
+        public Button normalAttBtn;
+        public Button heavyAttBtn;
+        public Image heavyAttFiller;
+        public Button skill1Btn;
+        public Button skill2Btn;
+        public Button bandageBtn;
 
         private void Start()
         {
@@ -104,6 +112,7 @@ namespace Characters.Playable.Scripts
             _canShowUI = true;
             _playerDamage.AttachArmor();
             _playerDamage.AttachWeapon();
+            _playerDamage.AttachEssence();
             Time.timeScale = 1;
             _playerMovement.canExecute = true;
         }
@@ -186,6 +195,60 @@ namespace Characters.Playable.Scripts
         public void HideReticle()
         {
             reticle.SetActive(false);
+        }
+
+        public void NormalAttackPressed()
+        {
+            if (normalAttBtn == null) return;
+            normalAttBtn.image.color = _playerMovement.stamina >= 10f ? Color.green : Color.red;
+            StartCoroutine(ResetButtonColor(normalAttBtn.image));
+        }
+        
+        public void HeavyAttackPressed()
+        {
+            if (heavyAttBtn == null) return;
+            heavyAttBtn.image.color = _playerMovement.stamina >= 20f ? Color.white : Color.red;
+            StartCoroutine(ResetButtonColor(heavyAttBtn.image));
+        }
+
+        public void Skill1Pressed()
+        {
+            if (skill1Btn == null) return;
+            skill1Btn.image.color = _playerMovement.stamina >= 30f ? Color.green : Color.red;
+            StartCoroutine(ResetButtonColor(skill1Btn.image));
+        }
+        
+        public void Skill2Pressed()
+        {
+            if (skill2Btn == null) return;
+            skill2Btn.image.color = _playerMovement.stamina >= 30f ? Color.green : Color.red;
+            StartCoroutine(ResetButtonColor(skill2Btn.image));
+        }
+        
+        public void BandageBtnPressed()
+        {
+            if (bandageBtn == null) return;
+            bandageBtn.image.color = _playerMovement.stamina >= 5f ? Color.green : Color.red;
+            StartCoroutine(ResetButtonColor(bandageBtn.image));
+        }
+
+        public IEnumerator HeavyButtonFiller()
+        {
+            while (heavyAttFiller.fillAmount < 1f)
+            {
+                heavyAttFiller.fillAmount += .2f;
+                
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            heavyAttFiller.fillAmount = 0f;
+        }
+
+        private static IEnumerator ResetButtonColor(Graphic image)
+        {
+            // Wait for the animation interval.
+            yield return new WaitForSeconds(0.15f);
+            image.color = Color.white;
         }
     }
 }

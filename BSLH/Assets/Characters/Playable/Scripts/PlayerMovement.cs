@@ -180,10 +180,6 @@ namespace Characters.Playable.Scripts
             _targetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
         }
 
-        public void PlayerLook(InputAction.CallbackContext context)
-        {
-        }
-        
         public void DoJump(InputAction.CallbackContext context)
         {
             if (!context.performed || !canExecute || !_groundedPlayer || !(stamina >= 30f)) return;
@@ -224,6 +220,10 @@ namespace Characters.Playable.Scripts
         
         public void DoLightAttack(InputAction.CallbackContext context)
         {
+            if (context.performed)
+            {
+                _playerUI.NormalAttackPressed();
+            }
             if (!context.performed || !(stamina >= 10f) || !canExecute) return;
             _animator.SetTrigger(LightAtt);
             _playerDamage.DoNormalAttack();
@@ -232,14 +232,25 @@ namespace Characters.Playable.Scripts
         
         public void DoHeavyAttack(InputAction.CallbackContext context)
         {
-            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
-            _animator.SetTrigger(HeavyAtt);
-            _playerDamage.DoHeavyAttack();
-            CalculateStamina(0f,20f);
+            if (context.performed && stamina >= 20f && canExecute)
+            {
+                _animator.SetTrigger(HeavyAtt);
+                _playerDamage.DoHeavyAttack();
+                CalculateStamina(0f, 20f);
+                _playerUI.HeavyAttackPressed();
+                StartCoroutine(_playerUI.HeavyButtonFiller());
+            }
+            
+            if (context.canceled)
+            {
+                StopCoroutine(_playerUI.HeavyButtonFiller());
+                _playerUI.heavyAttFiller.fillAmount = 0f;
+            }
         }
         
         public void DoSkill1(InputAction.CallbackContext context)
         {
+            _playerUI.Skill1Pressed();
             if (!context.performed || !(stamina >= 30f) || !canExecute) return;
             _animator.SetTrigger(Skill1);
             _playerDamage.DoSkill1();
@@ -248,6 +259,7 @@ namespace Characters.Playable.Scripts
         
         public void DoSkill2(InputAction.CallbackContext context)
         {
+            _playerUI.Skill2Pressed();
             if (!context.performed || !(stamina >= 30f) || !canExecute) return;
             _animator.SetTrigger(Skill2);
             _playerDamage.DoSkill2();
@@ -256,6 +268,7 @@ namespace Characters.Playable.Scripts
         
         public void DoBandage(InputAction.CallbackContext context)
         {
+            _playerUI.BandageBtnPressed();
             if (!context.performed || !(stamina >= 5f) || !canExecute || _playerDamage.bandageCount <= 0 || Time.timeScale == 0) return;
             _animator.SetTrigger(Bandage);
             CalculateStamina(0f, 5f);

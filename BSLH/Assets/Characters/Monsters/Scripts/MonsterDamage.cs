@@ -146,9 +146,9 @@ namespace Characters.Monsters.Scripts
             // Define blunt damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.4f,
-                IDamageStats.ArmorType.Medium => 1.4f,
-                IDamageStats.ArmorType.Heavy => 1.3f,
+                IDamageStats.ArmorType.Light => 1.2f,
+                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Heavy => 1.4f,
                 _ => 1f
             };
         }
@@ -158,8 +158,8 @@ namespace Characters.Monsters.Scripts
             // Define damage flat reduction values for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1f,
-                IDamageStats.ArmorType.Medium => 3f,
+                IDamageStats.ArmorType.Light => 2f,
+                IDamageStats.ArmorType.Medium => 4f,
                 IDamageStats.ArmorType.Heavy => 6f,
                 _ => 0f
             };

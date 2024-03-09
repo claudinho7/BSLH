@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 2837660880745607573}
   - component: {fileID: 2097977217810333874}
   - component: {fileID: -3125760034695272771}
-  m_Layer: 7
-  m_Name: DefensiveEssenceIcon
+  m_Layer: 0
+  m_Name: Speed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,14 +59,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.04597726, g: 0.042452812, b: 1, a: 1}
+  m_Color: {r: 0.15457265, g: 1, b: 0.043137252, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f126324fd2486a641842ea5a8244c2d1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: db427fab3e94daf4caa704d9314a77a1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -93,3 +93,5 @@ MonoBehaviour:
   isWeapon: 0
   isArmor: 0
   isEssence: 1
+  isLeather: 0
+  isBone: 0

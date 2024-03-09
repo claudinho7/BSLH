@@ -10,7 +10,8 @@ namespace Characters.Playable.Scripts
     public interface IDamageStats
     {
         public enum DamageType { Slashing, Piercing, Blunt }
-        public enum ArmorType { Light, Medium, Heavy }
+        public enum ArmorType { Naked, Light, Medium, Heavy }
+        public enum EssenceType { None, Offence, Defence, Speed }
         public enum ConditionType { None, Poison, Decay, Blind, Bleed, Stagger, PushBack }
     }
 
@@ -26,12 +27,15 @@ namespace Characters.Playable.Scripts
         //stats
         public IDamageStats.DamageType damageType; //this damage type
         public IDamageStats.ArmorType armorType; //this armor type
+        public IDamageStats.EssenceType essenceType; //this essence type
         public IDamageStats.ConditionType conditionType; //this condition type
         public float baseDamage; //weapons flat damage before modifiers
         public float conditionDamage; //damage over time value
         public float conditionTime; //damage over time duration
         public bool hasCondition; //check if damage over time is applied
         public float skillModifier = 1f; // to be added depending on the type of skill used
+        private float _essenceDefence; // to be added depending on the type of essence used
+        private float _essenceOffence; // to be added depending on the type of essence used
         public bool targetLocked;
         private bool _iFrames;
 
@@ -44,12 +48,17 @@ namespace Characters.Playable.Scripts
         public GameObject[] armoursList;
         public GameObject activeArmor; //equipped armor
         private GameObject _previousActiveArmor;
+        public GameObject[] essenceList;
+        public GameObject activeEssence; //equipped essence
+        private GameObject _previousActiveEssence;
         private string _equippedWeaponName;
         private string _equippedArmorName;
+        private string _equippedEssenceName;
         public Transform weaponBone;
         public Transform shieldBone;
         public GameObject weaponSlot;
         public GameObject armorSlot;
+        public GameObject essenceSlot;
         public int bandageCount = 5;
         public Transform projectileSpawnLoc;
         public GameObject projectileObj;
@@ -73,6 +82,7 @@ namespace Characters.Playable.Scripts
             //set gear
             //AttachWeapon();
             //AttachArmor();
+            //AttachEssence();
         }
 
         private void Start()
@@ -80,8 +90,10 @@ namespace Characters.Playable.Scripts
             // Initialize the Gear variable at the start.
             _previousActiveWeapon = activeWeapon;
             _previousActiveArmor = activeArmor;
+            _previousActiveEssence = activeEssence;
             _equippedWeaponName = activeWeapon.name;
             _equippedArmorName = activeArmor.name;
+            _equippedEssenceName = activeEssence.name;
             SwitchGear(); //trigger gear update on start
             conditionType = IDamageStats.ConditionType.None; //set condition to none
             activeWeapon.GetComponent<BoxCollider>().enabled = false; //set the weapon collision off at start
@@ -90,18 +102,20 @@ namespace Characters.Playable.Scripts
         private void Update()
         {
             // Check if there is an equipped weapon.
-            if (activeWeapon != null || activeArmor != null)
+            if (activeWeapon != null || activeArmor != null || activeEssence != null)
             {
                 // Get the name of the equipped GameObject.
                 _equippedWeaponName = activeWeapon.name;
                 _equippedArmorName = activeArmor.name;
+                _equippedEssenceName = activeEssence.name;
 
                 // Check if the active Gear GameObject has changed.
-                if (_previousActiveWeapon == activeWeapon && _previousActiveArmor == activeArmor) return;
+                if (_previousActiveWeapon == activeWeapon && _previousActiveArmor == activeArmor && _previousActiveEssence == activeEssence) return;
                 SwitchGear();
                 // Update the previous Gear variable.
                 _previousActiveWeapon = activeWeapon;
                 _previousActiveArmor = activeArmor;
+                _previousActiveEssence = activeEssence;
             }
         }
 
@@ -130,7 +144,6 @@ namespace Characters.Playable.Scripts
             var damageReduction = GetDamageReduction();
 
             // Calculate damage based on damage type and armor type.
-
             _totalDamageTaken = damageTypeReceived switch
             {
                 IDamageStats.DamageType.Slashing => baseDamageReceived * slashingMultiplier - damageReduction,
@@ -189,6 +202,7 @@ namespace Characters.Playable.Scripts
             // Define slashing damage multipliers for each armor type.
             return armorType switch
             {
+                IDamageStats.ArmorType.Naked => 2f,
                 IDamageStats.ArmorType.Light => 1.4f,
                 IDamageStats.ArmorType.Medium => 1.2f,
                 IDamageStats.ArmorType.Heavy => 1f,
@@ -201,6 +215,7 @@ namespace Characters.Playable.Scripts
             // Define piercing damage multipliers for each armor type.
             return armorType switch
             {
+                IDamageStats.ArmorType.Naked => 2f,
                 IDamageStats.ArmorType.Light => 1.2f,
                 IDamageStats.ArmorType.Medium => 1.4f,
                 IDamageStats.ArmorType.Heavy => 1f,
@@ -213,9 +228,10 @@ namespace Characters.Playable.Scripts
             // Define blunt damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.4f,
-                IDamageStats.ArmorType.Medium => 1.4f,
-                IDamageStats.ArmorType.Heavy => 1.3f,
+                IDamageStats.ArmorType.Naked => 2f,
+                IDamageStats.ArmorType.Light => 1.2f,
+                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Heavy => 1.4f,
                 _ => 1f
             };
         }
@@ -225,9 +241,10 @@ namespace Characters.Playable.Scripts
             // Define damage flat reduction values for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1f,
-                IDamageStats.ArmorType.Medium => 3f,
-                IDamageStats.ArmorType.Heavy => 6f,
+                IDamageStats.ArmorType.Naked => 0f + _essenceDefence,
+                IDamageStats.ArmorType.Light => 2f + _essenceDefence,
+                IDamageStats.ArmorType.Medium => 4f + _essenceDefence,
+                IDamageStats.ArmorType.Heavy => 6f + _essenceDefence,
                 _ => 0f
             };
         }
@@ -313,31 +330,59 @@ namespace Characters.Playable.Scripts
                     damageType = IDamageStats.DamageType.Blunt;
                     break;
                 case "Sword(Clone)":
-                    baseDamage = 10f;
+                    baseDamage = 10f + _essenceOffence;
                     damageType = IDamageStats.DamageType.Slashing;
                     break;
                 case "Spear(Clone)":
-                    baseDamage = 8f;
+                    baseDamage = 8f + _essenceOffence;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
                 case "Hammer(Clone)":
-                    baseDamage = 17f;
+                    baseDamage = 15f + _essenceOffence;
                     damageType = IDamageStats.DamageType.Blunt;
                     break;
                 case "Crossbow(Clone)":
-                    baseDamage = 7f;
+                    baseDamage = 7f + _essenceOffence;
                     damageType = IDamageStats.DamageType.Piercing;
                     break;
             }
 
             armorType = _equippedArmorName switch
             {
-                "Naked" => IDamageStats.ArmorType.Light,
+                "Naked" => IDamageStats.ArmorType.Naked,
                 "Light" => IDamageStats.ArmorType.Light,
                 "Medium" => IDamageStats.ArmorType.Medium,
                 "Heavy" => IDamageStats.ArmorType.Heavy,
                 _ => armorType
             };
+
+            switch (_equippedEssenceName)
+            {
+                case "None":
+                    _essenceOffence = 0f;
+                    _essenceDefence = 0f;
+                    gameObject.GetComponent<Animator>().speed = 1;
+                    essenceType = IDamageStats.EssenceType.None;
+                    break;
+                case "Offence":
+                    _essenceOffence = 3f;
+                    _essenceDefence = 0f;
+                    gameObject.GetComponent<Animator>().speed = 1;
+                    essenceType = IDamageStats.EssenceType.Offence;
+                    break;
+                case "Defence":
+                    _essenceDefence = 2f;
+                    _essenceOffence = 0f;
+                    gameObject.GetComponent<Animator>().speed = 1;
+                    essenceType = IDamageStats.EssenceType.Defence;
+                    break;
+                case "Speed":
+                    _essenceOffence = 0f;
+                    _essenceDefence = 0f;
+                    gameObject.GetComponent<Animator>().speed = 1.3f; //increase speed animation
+                    essenceType = IDamageStats.EssenceType.Speed;
+                    break;
+            }
         }
 
         //attach weapon to bone
@@ -424,6 +469,27 @@ namespace Characters.Playable.Scripts
             else if (armorSlot.transform.GetChild(0).gameObject.name == "Heavy(Clone)")
             {
                 activeArmor = armoursList[3];
+            }
+        }
+        
+        public void AttachEssence()
+        {
+            if (essenceList == null) return;
+            if (essenceSlot.transform.childCount < 1)
+            {
+                activeEssence = essenceList[0];
+            }
+            else if (essenceSlot.transform.GetChild(0).gameObject.name == "Offence(Clone)")
+            {
+                activeEssence = essenceList[1];
+            }
+            else if (essenceSlot.transform.GetChild(0).gameObject.name == "Defence(Clone)")
+            {
+                activeEssence = essenceList[2];
+            }
+            else if (essenceSlot.transform.GetChild(0).gameObject.name == "Speed(Clone)")
+            {
+                activeEssence = essenceList[3];
             }
         }
 
