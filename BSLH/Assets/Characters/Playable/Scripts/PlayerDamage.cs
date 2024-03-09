@@ -349,6 +349,7 @@ namespace Characters.Playable.Scripts
                 if (weaponBone.childCount > 0)
                 {
                     Destroy(weaponBone.GetChild(0).gameObject);
+                    _playerMovement.AimingCameraOff();
                     
                     if (shieldBone.childCount > 0)
                     {
@@ -386,6 +387,7 @@ namespace Characters.Playable.Scripts
                     activeWeapon = Instantiate(weaponsList[5], weaponBone, true);
                     activeShield = Instantiate(weaponsList[6], shieldBone, true);
                     _playerMovement.AnimControllerChange(3);
+                    _playerMovement.AimingCameraOn();
                 }
                 
                 
@@ -564,10 +566,24 @@ namespace Characters.Playable.Scripts
             }
         }
 
+        [SerializeField] private float shootForce;
         public void SpawnProjectile()
         {
-            var projectile = Instantiate(projectileObj, projectileSpawnLoc.position, projectileSpawnLoc.rotation);
-            projectile.GetComponent<Rigidbody>().velocity = projectileSpawnLoc.forward * 40;
+            var projectile = Instantiate(projectileObj, projectileSpawnLoc.position, _playerMovement.aimingCamera.transform.rotation);
+            
+            var cameraForward = _playerMovement.aimingCamera.transform.forward;
+
+            //Calculate Direction
+            var forceDirection = cameraForward;
+
+            if (Physics.Raycast(_playerMovement.aimingCamera.transform.position, cameraForward, out var hit, 500f))
+            {
+                forceDirection = (hit.point - projectileSpawnLoc.position).normalized;
+            }
+            
+            //add force
+            var addForce = forceDirection * shootForce + transform.up * 0;
+            projectile.GetComponent<Rigidbody>().AddForce(addForce, ForceMode.Impulse);
         }
 
         public void DoHeal()

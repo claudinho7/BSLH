@@ -22,8 +22,10 @@ namespace Characters.Playable.Scripts
         private bool _inventoryOpened;
 
         //camera stuff
-        [Header("Camera Settings")]
-        private Transform _cameraMain;
+        [Header("Camera Settings")] 
+        public Transform freeCameraTargetPos;
+        public Transform aimingCameraTargetPos;
+        public AxisState xAxis, yAxis;
         private Vector2 _targetMovementVector = Vector2.zero;
         [SerializeField] private float rotationSpeed;
         [SerializeField][Range(0.001f, 2f)]
@@ -31,6 +33,7 @@ namespace Characters.Playable.Scripts
         private Quaternion _playerRotation;
         public GameObject freeLookCamera;
         public GameObject lockedCamera;
+        public GameObject aimingCamera;
         public CinemachineTargetGroup targetGroup;
 
         //stats
@@ -67,15 +70,11 @@ namespace Characters.Playable.Scripts
             _controller = GetComponent<CharacterController>();
             _playerUI = GetComponent<PlayerUI>();
             
-            if (Camera.main != null) _cameraMain = Camera.main.transform;
-            
             canExecute = true;
             canMove = true;
         }
-
-        /// <summary>
-        /// Reference field for SmoothDamp of movement input
-        /// </summary>
+        
+        // Reference field for SmoothDamp of movement input
         private Vector2 _movementSmoothVelocity = Vector2.zero;
         
         private void Update()
@@ -99,11 +98,11 @@ namespace Characters.Playable.Scripts
             }
 
             //blocking
-            switch (isBlocking)
+            switch (isBlocking && stamina >= 7f)
             {
                 case true:
                     _animator.SetBool(IsBlocking, true);
-                    CalculateStamina(5f, 0f);
+                    CalculateStamina(7f, 0f);
                     break;
                 case false:
                     _animator.SetBool(IsBlocking, false);
@@ -124,7 +123,6 @@ namespace Characters.Playable.Scripts
             //target lock and body rotation
             if (_playerDamage.targetLocked && _monster != null)
             { 
-                //look at monster
                 // Get direction from monster
                 var targetDirection = _monster.transform.position - transform.position; 
                 // Calculate the Y rotation based on the direction to the target.
@@ -136,11 +134,41 @@ namespace Characters.Playable.Scripts
             }
             else
             {
-                //rotate where camera is looking
-                if (_playerMovement == Vector2.zero) return;
-                _playerRotation = Quaternion.Euler(0f, _cameraMain.eulerAngles.y, 0f);
-                transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
+                yAxis.Update(Time.deltaTime);
+                xAxis.Update(Time.deltaTime);
+            }
+        }
+
+        public void LateUpdate()
+        {
+            if (aimingCamera.activeSelf)
+            {
+                var localEulerAngles = aimingCameraTargetPos.localEulerAngles;
+                localEulerAngles = new Vector3(yAxis.Value, localEulerAngles.y, localEulerAngles.z);
+                aimingCameraTargetPos.localEulerAngles = localEulerAngles;
+                var transform1 = transform;
+                transform1.eulerAngles = new Vector3(transform1.eulerAngles.x, xAxis.Value, transform1.localEulerAngles.z);
+            }
+            else if(freeLookCamera.activeSelf)
+            {
+                var localEulerAngles = freeCameraTargetPos.localEulerAngles;
+                localEulerAngles = new Vector3(yAxis.Value, localEulerAngles.y, localEulerAngles.z);
+                freeCameraTargetPos.localEulerAngles = localEulerAngles;
+                
+                if (_playerMovement != Vector2.zero)
+                {
+                    var transform1 = freeCameraTargetPos.transform;
+                    transform1.eulerAngles = new Vector3(transform1.eulerAngles.x, xAxis.Value, transform1.localEulerAngles.z);
+
+                    _playerRotation = Quaternion.Euler(0f, transform1.eulerAngles.y, 0f); 
+                     transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
                     Time.deltaTime * rotationSpeed);
+                }
+                else
+                {
+                    var transform2 = freeCameraTargetPos.transform;
+                    transform2.eulerAngles = new Vector3(transform2.eulerAngles.x, xAxis.Value, transform2.localEulerAngles.z);
+                }
             }
         }
 
@@ -150,6 +178,10 @@ namespace Characters.Playable.Scripts
         public void PlayerMove(InputAction.CallbackContext context)
         {
             _targetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
+        }
+
+        public void PlayerLook(InputAction.CallbackContext context)
+        {
         }
         
         public void DoJump(InputAction.CallbackContext context)
@@ -173,11 +205,11 @@ namespace Characters.Playable.Scripts
         
         public void PlayerBlocking(InputAction.CallbackContext context)
         {
-            if (context.started && stamina >= 5f && canExecute)
+            if (context.started && stamina >= 7f && canExecute)
             {
                 isBlocking = true;
             } 
-            else if (context.canceled)
+            else if (context.canceled || stamina < 7f)
             {
                 isBlocking = false;
             }
@@ -208,18 +240,18 @@ namespace Characters.Playable.Scripts
         
         public void DoSkill1(InputAction.CallbackContext context)
         {
-            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
+            if (!context.performed || !(stamina >= 30f) || !canExecute) return;
             _animator.SetTrigger(Skill1);
             _playerDamage.DoSkill1();
-            CalculateStamina(0f,20f);
+            CalculateStamina(0f,30f);
         }
         
         public void DoSkill2(InputAction.CallbackContext context)
         {
-            if (!context.performed || !(stamina >= 20f) || !canExecute) return;
+            if (!context.performed || !(stamina >= 30f) || !canExecute) return;
             _animator.SetTrigger(Skill2);
             _playerDamage.DoSkill2();
-            CalculateStamina(0f,20f);
+            CalculateStamina(0f,30f);
         }
         
         public void DoBandage(InputAction.CallbackContext context)
@@ -254,7 +286,7 @@ namespace Characters.Playable.Scripts
 
         public void LockTarget(InputAction.CallbackContext context)
         {
-            switch (context.performed)
+            switch (context.performed && _playerDamage.activeWeapon.name != "Crossbow(Clone)")
             {
                 case true when (!_playerDamage.targetLocked && _monster != null):
                     _playerDamage.targetLocked = true;
@@ -337,6 +369,27 @@ namespace Characters.Playable.Scripts
         
         #endregion
 
+        //aiming camera switch
+        #region AimingCamera On/Off
+        public void AimingCameraOn()
+        {
+            _playerDamage.targetLocked = false;
+            lockedCamera.gameObject.SetActive(false);
+            freeLookCamera.gameObject.SetActive(false);
+            aimingCamera.gameObject.SetActive(true);
+            _playerUI.ShowReticle();
+        }
+        
+        public void AimingCameraOff()
+        {
+            _playerDamage.targetLocked = false;
+            lockedCamera.gameObject.SetActive(false);
+            freeLookCamera.gameObject.SetActive(true);
+            aimingCamera.gameObject.SetActive(false);
+            _playerUI.HideReticle();
+        }
+        #endregion
+
         public void PlayerDied()
         {
             _animator.SetTrigger(Died);
@@ -355,7 +408,7 @@ namespace Characters.Playable.Scripts
             _animator.SetTrigger(Back);
 
             // Wait for the animation interval.
-            yield return new WaitForSeconds(3.3f);
+            yield return new WaitForSeconds(3f);
 
             canExecute = true;
             canMove = true;
@@ -450,6 +503,8 @@ namespace Characters.Playable.Scripts
             // Teleport player to hub
             HubTeleport();
             _playerUI.timer = 16;
+            _playerDamage.currentHealth = 300;
+            _playerDamage.maxHealth = 300;
         }
         
         #endregion

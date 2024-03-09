@@ -12,6 +12,7 @@ namespace Characters.Playable.Scripts
         public Image currentHealthBar;
         public Image maxHealthBar;
         public Image currentStaminaBar;
+        public GameObject reticle;
         public GameObject interact;
         public GameObject map;
         public GameObject pauseMenu;
@@ -177,5 +178,14 @@ namespace Characters.Playable.Scripts
             _playerMovement.canExecute = true;
         }
         #endregion
+
+        public void ShowReticle()
+        {
+            reticle.SetActive(true);
+        }
+        public void HideReticle()
+        {
+            reticle.SetActive(false);
+        }
     }
 }
