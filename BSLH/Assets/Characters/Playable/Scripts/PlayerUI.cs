@@ -27,12 +27,23 @@ namespace Characters.Playable.Scripts
         private bool _canShowUI;
         public int timer;
 
+        [Header("Skill Bar")] 
+        public GameObject skillBar;
         public Button normalAttBtn;
         public Button heavyAttBtn;
         public Image heavyAttFiller;
         public Button skill1Btn;
         public Button skill2Btn;
         public Button bandageBtn;
+        public TextMeshProUGUI skill1Name;
+        public TextMeshProUGUI skill2Name;
+        public Sprite[] normalAttIcons;
+        public Sprite[] heavyAttIcons;
+        public Sprite[] heavyAttFillerIcons;
+        public Sprite[] skill1Icons;
+        public Sprite[] skill2Icons;
+        public string[] skill1Names;
+        public string[] skill2Names;
 
         private void Start()
         {
@@ -82,6 +93,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
+            skillBar.SetActive(false);
             Time.timeScale = 0;
             _playerMovement.canExecute = false;
         }
@@ -91,6 +103,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
+            skillBar.SetActive(true);
             Time.timeScale = 1;
             _playerMovement.canExecute = true;
         }
@@ -100,6 +113,7 @@ namespace Characters.Playable.Scripts
             if (!_canShowUI) return;
             Cursor.lockState = CursorLockMode.None;
             inventory.SetActive(true);
+            skillBar.SetActive(false);
             _canShowUI = false;
             Time.timeScale = 0;
             _playerMovement.canExecute = false;
@@ -110,9 +124,11 @@ namespace Characters.Playable.Scripts
             inventory.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
+            skillBar.SetActive(true);
             _playerDamage.AttachArmor();
             _playerDamage.AttachWeapon();
             _playerDamage.AttachEssence();
+            SwitchWeaponIcons();
             Time.timeScale = 1;
             _playerMovement.canExecute = true;
         }
@@ -122,6 +138,7 @@ namespace Characters.Playable.Scripts
             if (!_canShowUI) return;
             pauseMenu.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
+            skillBar.SetActive(false);
             _canShowUI = false;
             Time.timeScale = 0;
             _playerMovement.canExecute = false;
@@ -131,6 +148,7 @@ namespace Characters.Playable.Scripts
         {
             pauseMenu.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
+            skillBar.SetActive(true);
             Time.timeScale = 1;
             _canShowUI = true;
             _playerMovement.canExecute = true;
@@ -143,7 +161,7 @@ namespace Characters.Playable.Scripts
 
         public void RestartGame()
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(0);
             Time.timeScale = 1;
             deathScreen.SetActive(false);
             _canShowUI = true;
@@ -195,6 +213,60 @@ namespace Characters.Playable.Scripts
         public void HideReticle()
         {
             reticle.SetActive(false);
+        }
+
+        //skill bars
+        #region SkillBar
+        private void SwitchWeaponIcons()
+        {
+            switch (_playerDamage.activeWeapon.name)
+            {
+                case "Sword(Clone)":
+                    normalAttBtn.image.sprite = normalAttIcons[1];
+                    heavyAttBtn.image.sprite = heavyAttIcons[1];
+                    heavyAttFiller.sprite = heavyAttFillerIcons[1];
+                    skill1Btn.image.sprite = skill1Icons[1];
+                    skill2Btn.image.sprite = skill2Icons[1];
+                    skill1Name.text = skill1Names[1];
+                    skill2Name.text = skill2Names[1];
+                    break;
+                case "Spear(Clone)":
+                    normalAttBtn.image.sprite = normalAttIcons[2];
+                    heavyAttBtn.image.sprite = heavyAttIcons[2];
+                    heavyAttFiller.sprite = heavyAttFillerIcons[2];
+                    skill1Btn.image.sprite = skill1Icons[2];
+                    skill2Btn.image.sprite = skill2Icons[2];
+                    skill1Name.text = skill1Names[2];
+                    skill2Name.text = skill2Names[2];
+                    break;
+                case "Hammer(Clone)":
+                    normalAttBtn.image.sprite = normalAttIcons[3];
+                    heavyAttBtn.image.sprite = heavyAttIcons[3];
+                    heavyAttFiller.sprite = heavyAttFillerIcons[3];
+                    skill1Btn.image.sprite = skill1Icons[3];
+                    skill2Btn.image.sprite = skill2Icons[3];
+                    skill1Name.text = skill1Names[3];
+                    skill2Name.text = skill2Names[3];
+                    break;
+                case "Crossbow(Clone)":
+                    normalAttBtn.image.sprite = normalAttIcons[4];
+                    heavyAttBtn.image.sprite = heavyAttIcons[4];
+                    heavyAttFiller.sprite = heavyAttFillerIcons[4];
+                    skill1Btn.image.sprite = skill1Icons[4];
+                    skill2Btn.image.sprite = skill2Icons[4];
+                    skill1Name.text = skill1Names[4];
+                    skill2Name.text = skill2Names[4];
+                    break;
+                default:
+                    normalAttBtn.image.sprite = normalAttIcons[0];
+                    heavyAttBtn.image.sprite = heavyAttIcons[0];
+                    heavyAttFiller.sprite = heavyAttFillerIcons[0];
+                    skill1Btn.image.sprite = skill1Icons[0];
+                    skill2Btn.image.sprite = skill2Icons[0];
+                    skill1Name.text = skill1Names[0];
+                    skill2Name.text = skill2Names[0];
+                    break;
+            }
         }
 
         public void NormalAttackPressed()
@@ -250,5 +322,6 @@ namespace Characters.Playable.Scripts
             yield return new WaitForSeconds(0.15f);
             image.color = Color.white;
         }
+        #endregion
     }
 }

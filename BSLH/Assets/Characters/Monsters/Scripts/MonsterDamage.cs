@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Characters.Monsters.Scripts.UtilityCore;
+using Characters.NPC.Scripts;
 using Characters.Playable.Scripts;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace Characters.Monsters.Scripts
@@ -146,8 +148,8 @@ namespace Characters.Monsters.Scripts
             // Define blunt damage multipliers for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Light => 1.1f,
+                IDamageStats.ArmorType.Medium => 1.1f,
                 IDamageStats.ArmorType.Heavy => 1.4f,
                 _ => 1f
             };
@@ -158,9 +160,9 @@ namespace Characters.Monsters.Scripts
             // Define damage flat reduction values for each armor type.
             return armorType switch
             {
-                IDamageStats.ArmorType.Light => 2f,
-                IDamageStats.ArmorType.Medium => 4f,
-                IDamageStats.ArmorType.Heavy => 6f,
+                IDamageStats.ArmorType.Light => 1f,
+                IDamageStats.ArmorType.Medium => 3f,
+                IDamageStats.ArmorType.Heavy => 5f,
                 _ => 0f
             };
         }
@@ -437,11 +439,19 @@ namespace Characters.Monsters.Scripts
                     yield return new WaitForSeconds(delayBetweenSpawns);
                 }
 
-                GameObject.Find("Player").GetComponent<PlayerMovement>().TriggerTeleportBack();
+                if (SceneManager.GetActiveScene().buildIndex == 1)
+                {
+                    GameObject.Find("Peasant Man").GetComponent<NpcController>().StartEnding();
+                }
+                else
+                {
+                    GameObject.Find("Player").GetComponent<PlayerMovement>().TriggerTeleportBack();
+                }
                 
                 // Wait for the tick interval.
                 yield return new WaitForSeconds(5f);
                 elapsedTime += 5f;
+                yield return new WaitForSeconds(1f);
             }
             // Destroy the gameObject after all spawns are done
             Destroy(gameObject);

@@ -54,7 +54,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
         
         private void Start()
         {
-            _centerPoint = this.transform;
+            _centerPoint = transform;
             isPatrolling = true;
         }
 
@@ -93,7 +93,6 @@ namespace Characters.Monsters.Scripts.UtilityCore
             // Perform the raycast
             if (Physics.Raycast(ray, out var hit, ProximityDistance))
             {
-                Debug.Log(hit.collider.name);
                 // Check if the hit object is the player
                 if (hit.collider.CompareTag("Player"))
                 {
@@ -101,21 +100,17 @@ namespace Characters.Monsters.Scripts.UtilityCore
                     canHitMelee = true;
                     canHitRanged = true;
                     isPatrolling = false; //stop patrolling
-                    Debug.Log("Player is in line of sight!");
                 }
                 else
                 {
                     // Something else is in between the AI and the player
                     canHitRanged = false;
-                    isPatrolling = false; //stop patrolling
-                    Debug.Log("Something is blocking the line of sight.");
                     canHitMelee = distanceToPlayer < 2f; //can hit melee even if not in LOS within 2f
                 }
             }
             else
             {
                 // The raycast did not hit anything
-                //Debug.Log("No objects in sight.");
                 canHitMelee = false;
                 canHitRanged = false;
             }

@@ -1,0 +1,881 @@
+fileFormatVersion: 2
+guid: 7a24e4ff337cd0d4f87161876a212f9d
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 1
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: "\nClip 'P_hit1_sword take3_FBX' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'Sara_spine_01' has translation
+      animation that will be discarded.\n\t'Sara_spine_02' has translation animation
+      that will be discarded.\n\t'Sara_neck_01' has translation animation that will
+      be discarded.\n\t'Sara_head' has translation animation that will be discarded.\n"
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: P_hit1_sword take3_FBX
+      takeName: P_hit1_sword take3_FBX
+      internalID: 3191478090600885324
+      firstFrame: 95
+      lastFrame: 260
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human:
+    - boneName: Sara_pelvis
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thigh_l
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thigh_r
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_calf_l
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_calf_r
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_foot_l
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_foot_r
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_spine_01
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_spine_02
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_neck_01
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_clavicle_l
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_clavicle_r
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_upperarm_l
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_upperarm_r
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_lowerarm_l
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_lowerarm_r
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_hand_l
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_hand_r
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ball_l
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ball_r
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_01_l
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_02_l
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_03_l
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_01_l
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_02_l
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_03_l
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_01_l
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_02_l
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_03_l
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_01_l
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_02_l
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_03_l
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_01_l
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_02_l
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_03_l
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_01_r
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_02_r
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_thumb_03_r
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_01_r
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_02_r
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_index_03_r
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_01_r
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_02_r
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_middle_03_r
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_01_r
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_02_r
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_ring_03_r
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_01_r
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_02_r
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Sara_pinky_03_r
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: P_hit1_sword take3(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_Root
+      parentName: P_hit1_sword take3(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pelvis
+      parentName: Sara_Root
+      position: {x: -0.000000007450581, y: 0.8594622, z: -0.029224843}
+      rotation: {x: 0.016651066, y: 0.0023454, z: -0.0120425485, w: 0.9997861}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_spine_01
+      parentName: Sara_pelvis
+      position: {x: -8.1490725e-10, y: 0.07912229, z: 0.0000000020954758}
+      rotation: {x: 0.02756719, y: -0.006998142, z: 0.009037732, w: 0.99955463}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_spine_02
+      parentName: Sara_spine_01
+      position: {x: 0.0000000027939677, y: 0.19490613, z: -4.656613e-10}
+      rotation: {x: -0.016520143, y: -0.0065498813, z: 0.0119029395, w: 0.99977124}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_neck_01
+      parentName: Sara_spine_02
+      position: {x: 0.0000000027939677, y: 0.20476085, z: -0.0000000055879354}
+      rotation: {x: -0.07904786, y: -0.018692086, z: -0.039237622, w: 0.9959229}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_head
+      parentName: Sara_neck_01
+      position: {x: 9.313226e-10, y: 0.15455118, z: 0.020218426}
+      rotation: {x: 0.0019552824, y: -0.01549296, z: -0.028394729, w: 0.9994748}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_HeadEnd
+      parentName: Sara_head
+      position: {x: -0, y: 0.17866418, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_clavicle_l
+      parentName: Sara_spine_02
+      position: {x: -0.035710283, y: 0.14912987, z: 0.00059486553}
+      rotation: {x: -0.024489472, y: -0.104861945, z: -0.121485144, w: 0.9867348}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_upperarm_l
+      parentName: Sara_clavicle_l
+      position: {x: -0.09329825, y: -0.00000005401671, z: -0.000000014901161}
+      rotation: {x: 0.14375076, y: 0.091225445, z: 0.08712022, w: 0.9815416}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_lowerarm_l
+      parentName: Sara_upperarm_l
+      position: {x: -0.3082028, y: -0.000000031664968, z: 0.00000008940697}
+      rotation: {x: -0.15508778, y: 0.0777164, z: 0.015361771, w: 0.9847193}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_hand_l
+      parentName: Sara_lowerarm_l
+      position: {x: -0.2047571, y: -0.000000016763806, z: -0.000000029802322}
+      rotation: {x: 0.0101693785, y: -0.16500613, z: 0.07002439, w: 0.98375106}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_01_l
+      parentName: Sara_hand_l
+      position: {x: -0.019489296, y: -0.022146994, z: 0.031005718}
+      rotation: {x: 0.3706194, y: 0.43672746, z: -0.12401834, w: 0.81026536}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_02_l
+      parentName: Sara_thumb_01_l
+      position: {x: -0.028198866, y: -0.000000013038516, z: 0.0000000088475645}
+      rotation: {x: 0.050999146, y: -0.032706756, z: -0.006896538, w: 0.9981392}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_03_l
+      parentName: Sara_thumb_02_l
+      position: {x: -0.024101801, y: 0.000000006519258, z: -0.000000037252903}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LThumb3End
+      parentName: Sara_thumb_03_l
+      position: {x: -0.021530641, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_01_l
+      parentName: Sara_hand_l
+      position: {x: -0.07972899, y: -0.000000041909516, z: 0.031005735}
+      rotation: {x: -0.07933281, y: 0.06352779, z: 0.055841412, w: 0.9932534}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_02_l
+      parentName: Sara_index_01_l
+      position: {x: -0.042432766, y: 0.000000026077032, z: -0.0000000018626451}
+      rotation: {x: 0.000000022351736, y: 0.000000007450579, z: 0.0335187, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_03_l
+      parentName: Sara_index_02_l
+      position: {x: -0.021216363, y: 0.000000020489097, z: -0.0000000018626451}
+      rotation: {x: 0.000000056499406, y: 0.00000058033055, z: 0.03351543, w: 0.9994382}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LIndex3End
+      parentName: Sara_index_03_l
+      position: {x: -0.018953055, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_01_l
+      parentName: Sara_hand_l
+      position: {x: -0.07972896, y: 0.000000033527613, z: 0.010276198}
+      rotation: {x: -0.032236822, y: 0.0615184, z: 0.05741374, w: 0.99593174}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_02_l
+      parentName: Sara_middle_01_l
+      position: {x: -0.046676047, y: -0.000000007450581, z: 0.0000000018626451}
+      rotation: {x: -0.0000000037252894, y: 0.00000044330943, z: 0.033518538, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_03_l
+      parentName: Sara_middle_02_l
+      position: {x: -0.025459692, y: 0.000000035390258, z: 9.313226e-10}
+      rotation: {x: 0.00000005549549, y: -0.00000012474062, z: 0.033516645, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LMiddle3End
+      parentName: Sara_middle_03_l
+      position: {x: -0.022743681, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_01_l
+      parentName: Sara_hand_l
+      position: {x: -0.07529958, y: 0.000000014901161, z: -0.010276169}
+      rotation: {x: -0.13805911, y: 0.06529904, z: 0.06733063, w: 0.98597276}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_02_l
+      parentName: Sara_ring_01_l
+      position: {x: -0.04243272, y: 0.000000018626451, z: 0.000000013038516}
+      rotation: {x: -0.00000010430809, y: -0.0000001713633, z: 0.033520523, w: 0.99943805}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_03_l
+      parentName: Sara_ring_02_l
+      position: {x: -0.021216353, y: -0.000000029802322, z: 0.000000004656613}
+      rotation: {x: -0.00000014014554, y: -0.0000012363863, z: 0.033521228, w: 0.99943805}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LRing3End
+      parentName: Sara_ring_03_l
+      position: {x: -0.018953055, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_01_l
+      parentName: Sara_hand_l
+      position: {x: -0.07087021, y: -0.000000013038516, z: -0.031005694}
+      rotation: {x: -0.17532729, y: 0.06382889, z: 0.07224164, w: 0.97977924}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_02_l
+      parentName: Sara_pinky_01_l
+      position: {x: -0.03394614, y: 0.000000009313226, z: 0.000000024214387}
+      rotation: {x: -0.00000014901154, y: -0.00000011548394, z: 0.033518292, w: 0.9994381}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_03_l
+      parentName: Sara_pinky_02_l
+      position: {x: -0.016973063, y: -0.000000011175871, z: 0.000000004656613}
+      rotation: {x: 0.00000019658633, y: 0.0000017476709, z: 0.033513166, w: 0.9994383}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LPinky3End
+      parentName: Sara_pinky_03_l
+      position: {x: -0.015162427, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_clavicle_r
+      parentName: Sara_spine_02
+      position: {x: 0.035710283, y: 0.14912981, z: 0.0005948674}
+      rotation: {x: -0.030574935, y: 0.12446916, z: 0.108640626, w: 0.9857839}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_upperarm_r
+      parentName: Sara_clavicle_r
+      position: {x: 0.09329825, y: 0.000000018626451, z: -0.000000007450581}
+      rotation: {x: 0.20508459, y: -0.09560669, z: -0.10987275, w: 0.96784693}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_lowerarm_r
+      parentName: Sara_upperarm_r
+      position: {x: 0.30820286, y: 0.000000048428774, z: -0.000000029802322}
+      rotation: {x: -0.15837005, y: -0.07075985, z: 0.0014542659, w: 0.98484004}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_hand_r
+      parentName: Sara_lowerarm_r
+      position: {x: 0.2047571, y: -0.000000047730282, z: -0.000000029802322}
+      rotation: {x: -0.022967393, y: 0.43150195, z: 0.038306117, w: 0.9010056}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_01_r
+      parentName: Sara_hand_r
+      position: {x: 0.01948931, y: -0.022146987, z: 0.031005718}
+      rotation: {x: 0.31420836, y: -0.47835684, z: 0.1451474, w: 0.8070812}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_02_r
+      parentName: Sara_thumb_01_r
+      position: {x: 0.028198857, y: 0.000000007450581, z: 0.000000011175871}
+      rotation: {x: 0.003954113, y: 0.021826984, z: -0.019876989, w: 0.99955636}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thumb_03_r
+      parentName: Sara_thumb_02_r
+      position: {x: 0.024101779, y: -0.00000001071021, z: -0.0000000055879354}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RThumb3End
+      parentName: Sara_thumb_03_r
+      position: {x: 0.021530641, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_01_r
+      parentName: Sara_hand_r
+      position: {x: 0.07972899, y: -0.000000039115548, z: 0.031005686}
+      rotation: {x: 0.09938217, y: -0.05636102, z: -0.06009639, w: 0.9916326}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_02_r
+      parentName: Sara_index_01_r
+      position: {x: 0.04243276, y: 0.000000014901161, z: 0.000000013038516}
+      rotation: {x: -0.00000011920926, y: -0.00000021234149, z: -0.033516984, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_index_03_r
+      parentName: Sara_index_02_r
+      position: {x: 0.0212164, y: -0.000000016763806, z: 0.0000000037252903}
+      rotation: {x: 0.00000017045964, y: -0.0000032965947, z: -0.033513416, w: 0.9994383}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RIndex3End
+      parentName: Sara_index_03_r
+      position: {x: 0.018953055, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_01_r
+      parentName: Sara_hand_r
+      position: {x: 0.079729006, y: -0.000000055879354, z: 0.010276175}
+      rotation: {x: 0.017319176, y: -0.05680294, z: -0.055473316, w: 0.99669266}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_02_r
+      parentName: Sara_middle_01_r
+      position: {x: 0.046676, y: 0.000000022351742, z: 0.000000014901161}
+      rotation: {x: 0.000000080093734, y: 0.00000022724268, z: -0.033519063, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_middle_03_r
+      parentName: Sara_middle_02_r
+      position: {x: 0.025459604, y: 0.000000011175871, z: 0.00000002514571}
+      rotation: {x: 0.00000013478402, y: 0.0000014332775, z: -0.03351822, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RMiddle3End
+      parentName: Sara_middle_03_r
+      position: {x: 0.022743681, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_01_r
+      parentName: Sara_hand_r
+      position: {x: 0.075299606, y: -0.000000020489097, z: -0.01027617}
+      rotation: {x: -0.13142404, y: -0.06382906, z: -0.061232787, w: 0.9873724}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_02_r
+      parentName: Sara_ring_01_r
+      position: {x: 0.042432725, y: 0, z: -0.0000000037252903}
+      rotation: {x: 0.00000017881385, y: 0.000000029802308, z: -0.03351939, w: 0.99943805}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ring_03_r
+      parentName: Sara_ring_02_r
+      position: {x: 0.02121638, y: -0.0000000018626451, z: 0.000000018626451}
+      rotation: {x: -0.00000037222756, y: 0.0000022403317, z: -0.03351484, w: 0.9994382}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RRing3End
+      parentName: Sara_ring_03_r
+      position: {x: 0.018953055, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_01_r
+      parentName: Sara_hand_r
+      position: {x: 0.07087021, y: -0.0000000018626451, z: -0.03100571}
+      rotation: {x: -0.1934693, y: -0.06637718, z: -0.06032231, w: 0.976998}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_02_r
+      parentName: Sara_pinky_01_r
+      position: {x: 0.033946183, y: 0.000000011175871, z: -0.000000014901161}
+      rotation: {x: -0.00000046193577, y: 0.000003471969, z: -0.03351911, w: 0.99943817}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_pinky_03_r
+      parentName: Sara_pinky_02_r
+      position: {x: 0.016973127, y: 0.000000023283064, z: 0.0000000018626451}
+      rotation: {x: -0.0000001947065, y: -0.000004066842, z: -0.03351995, w: 0.99943805}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RPinky3End
+      parentName: Sara_pinky_03_r
+      position: {x: 0.015162427, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thigh_l
+      parentName: Sara_pelvis
+      position: {x: -0.08933212, y: -0.000000005355105, z: 0}
+      rotation: {x: -0.0150316935, y: -0.0007262849, z: -0.040970325, w: 0.99904704}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_calf_l
+      parentName: Sara_thigh_l
+      position: {x: -0.000000004656613, y: -0.42981166, z: -0.0000000037252903}
+      rotation: {x: 0.048279352, y: -0.000000034186993, z: 0.0000000018626449, w: 0.9988339}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_foot_l
+      parentName: Sara_calf_l
+      position: {x: -0, y: -0.3786235, z: -0.000000011175871}
+      rotation: {x: -0.074342325, y: -0.011334179, z: 0.027832069, w: 0.9967799}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ball_l
+      parentName: Sara_foot_l
+      position: {x: -0.000000014901161, y: -0.058065865, z: 0.13399819}
+      rotation: {x: 0.0055908505, y: -0.000000013242243, z: 3.910424e-18, w: 0.9999844}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_LToeEnd
+      parentName: Sara_ball_l
+      position: {x: -0, y: 0, z: 0.03573284}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_thigh_r
+      parentName: Sara_pelvis
+      position: {x: 0.08933212, y: 0.000000005355105, z: 0}
+      rotation: {x: 0.0033509242, y: -0.0015569245, z: 0.006738683, w: 0.9999705}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_calf_r
+      parentName: Sara_thigh_r
+      position: {x: 0.0000000018626451, y: -0.4298117, z: 0.000000007450581}
+      rotation: {x: 0.075062394, y: 0.000000023443134, z: 0.000000001862645, w: 0.99717885}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_foot_r
+      parentName: Sara_calf_r
+      position: {x: 0.000000014901161, y: -0.37862355, z: -0.000000007450581}
+      rotation: {x: -0.08818237, y: 0.09146188, z: 0.06254932, w: 0.98992234}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_ball_r
+      parentName: Sara_foot_r
+      position: {x: -0.000000029802322, y: -0.058065865, z: 0.1339982}
+      rotation: {x: -0.00716181, y: -0.000000027474012, z: 0.0000000037252899, w: 0.99997437}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Sara_RToeEnd
+      parentName: Sara_ball_r
+      position: {x: -0, y: 0, z: 0.03573284}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

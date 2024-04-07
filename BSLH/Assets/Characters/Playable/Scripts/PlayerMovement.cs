@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Cinemachine;
 using UnityEngine;
@@ -35,6 +36,8 @@ namespace Characters.Playable.Scripts
         public GameObject lockedCamera;
         public GameObject aimingCamera;
         public CinemachineTargetGroup targetGroup;
+        // Reference field for SmoothDamp of movement input
+        private Vector2 _movementSmoothVelocity = Vector2.zero;
 
         //stats
         [Header("Stats")]
@@ -46,12 +49,21 @@ namespace Characters.Playable.Scripts
         public bool canMove;
         public bool canInteractWithMap;
         public bool canInteractWithCraftingBench;
+        
+        //combo State
+        private enum ComboState { None, Attack1, Attack2, Attack3 }
+        private ComboState _currentComboState = ComboState.None;
+        private bool _canPerformCombo;
+        public float comboCooldownTime = 0.5f; // Adjust as needed
+        private float _lastComboTime;
 
         //animation cache
         private static readonly int Jump = Animator.StringToHash("Jump");
         private static readonly int IsBlocking = Animator.StringToHash("IsBlocking");
         private static readonly int Dodge = Animator.StringToHash("Dodge");
         private static readonly int LightAtt = Animator.StringToHash("LightAtt");
+        private static readonly int LightAtt2 = Animator.StringToHash("LightAtt2");
+        private static readonly int LightAtt3 = Animator.StringToHash("LightAtt3");
         private static readonly int HeavyAtt = Animator.StringToHash("HeavyAtt");
         private static readonly int Skill1 = Animator.StringToHash("Skill1");
         private static readonly int Skill2 = Animator.StringToHash("Skill2");
@@ -60,23 +72,26 @@ namespace Characters.Playable.Scripts
         private static readonly int Vertical = Animator.StringToHash("Vertical");
         private static readonly int Died = Animator.StringToHash("Died");
         private static readonly int Back = Animator.StringToHash("FallBack");
+        private static readonly int TakeHit = Animator.StringToHash("TakeHit");
 
         private void Awake()
         {
             _playerInput = new PlayerInput();
             _playerDamage = GetComponent<PlayerDamage>();
             _animator = GetComponent<Animator>();
-            _animator.runtimeAnimatorController = animatorController[0];
             _controller = GetComponent<CharacterController>();
             _playerUI = GetComponent<PlayerUI>();
+        }
+
+        private void Start()
+        {
+            _animator.runtimeAnimatorController = animatorController[0];
+            _monster = GameObject.FindGameObjectWithTag("Monster");
             
             canExecute = true;
             canMove = true;
         }
-        
-        // Reference field for SmoothDamp of movement input
-        private Vector2 _movementSmoothVelocity = Vector2.zero;
-        
+
         private void Update()
         {
             _groundedPlayer = _controller.isGrounded;
@@ -137,6 +152,12 @@ namespace Characters.Playable.Scripts
                 yAxis.Update(Time.deltaTime);
                 xAxis.Update(Time.deltaTime);
             }
+            
+            // Reset combo cooldown timer
+            if (_canPerformCombo && Time.time - _lastComboTime >= comboCooldownTime)
+            {
+                _canPerformCombo = false;
+            }
         }
 
         public void LateUpdate()
@@ -171,10 +192,9 @@ namespace Characters.Playable.Scripts
                 }
             }
         }
-
+        
         //action triggers
         #region Action Triggers
-        
         public void PlayerMove(InputAction.CallbackContext context)
         {
             _targetMovementVector = (context.performed && canMove) ? context.ReadValue<Vector2>() : Vector2.zero;
@@ -225,11 +245,23 @@ namespace Characters.Playable.Scripts
                 _playerUI.NormalAttackPressed();
             }
             if (!context.performed || !(stamina >= 10f) || !canExecute) return;
-            _animator.SetTrigger(LightAtt);
             _playerDamage.DoNormalAttack();
             CalculateStamina(0f,10f);
+            
+            if (_canPerformCombo)
+            {
+                PerformComboAttack();
+            }
+            else
+            {
+                // Player can only perform the first attack, ignore subsequent inputs
+                _currentComboState = ComboState.Attack1;
+                _animator.SetTrigger(LightAtt);
+                _lastComboTime = Time.time;
+                _canPerformCombo = true;
+            }
         }
-        
+
         public void DoHeavyAttack(InputAction.CallbackContext context)
         {
             if (context.performed && stamina >= 20f && canExecute)
@@ -402,6 +434,40 @@ namespace Characters.Playable.Scripts
             _playerUI.HideReticle();
         }
         #endregion
+        
+        private void PerformComboAttack()
+        {
+            switch (_currentComboState)
+            {
+                case ComboState.None:
+                    _currentComboState = ComboState.Attack1; 
+                    _animator.SetTrigger(LightAtt);
+                    break;
+
+                case ComboState.Attack1:
+                    _currentComboState = ComboState.Attack2;
+                    _animator.SetTrigger(LightAtt2);
+                    break;
+
+                case ComboState.Attack2:
+                    _currentComboState = ComboState.Attack3;
+                    _animator.SetTrigger(LightAtt3);
+                    break;
+
+                case ComboState.Attack3:
+                    // Player has reached the end of the combo chain, reset to None
+                    //_currentComboState = ComboState.None;
+                    // Loop back to the first attack
+                    _currentComboState = ComboState.Attack1;
+                    _animator.SetTrigger(LightAtt);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            _lastComboTime = Time.time;
+            _canPerformCombo = true;
+        }
 
         public void PlayerDied()
         {
@@ -410,11 +476,19 @@ namespace Characters.Playable.Scripts
             Debug.Log("Player Dead");
             _playerInput.Disable(); //not working??
         }
+        
+        public void PlayerHit()
+        {
+            _animator.StopPlayback();
+            _animator.SetTrigger(TakeHit);
+            Debug.Log("player got hit");
+        }
 
         public IEnumerator FallBack()
         {
             Debug.Log("pushed back");
-
+            _animator.StopPlayback();
+            
             // Apply pushback.
             canExecute = false;
             canMove = false;
@@ -434,6 +508,13 @@ namespace Characters.Playable.Scripts
 
         private void HubTeleport()
         {
+            _sceneToBeLoaded = "S_Hub";
+            _locationToBeTeleported = new Vector3(23, 6, 7);
+            StartCoroutine(LoadScene());
+        }
+        
+        private void HubTeleportNew()
+        {
             _sceneToBeLoaded = "S_HubNew";
             _locationToBeTeleported = new Vector3(23, 6, 7);
             StartCoroutine(LoadScene());
@@ -441,7 +522,7 @@ namespace Characters.Playable.Scripts
         
         public void Arena1Teleport()
         {
-            _sceneToBeLoaded = "S_Area1";
+            _sceneToBeLoaded = "S_Area11";
             _locationToBeTeleported = new Vector3(30, 20, 10);
             StartCoroutine(LoadScene());
         }
@@ -457,13 +538,6 @@ namespace Characters.Playable.Scripts
         {
             _sceneToBeLoaded = "S_Area3";
             _locationToBeTeleported = new Vector3(30, 20, 10);
-            StartCoroutine(LoadScene());
-        }
-        
-        public void Arena4Teleport()
-        {
-            _sceneToBeLoaded = "S_Arena4";
-            _locationToBeTeleported = new Vector3(20, 0, 20);
             StartCoroutine(LoadScene());
         }
 
@@ -489,10 +563,11 @@ namespace Characters.Playable.Scripts
             _playerUI.HideInteract();
             canInteractWithMap = false;
             _monster = GameObject.FindGameObjectWithTag("Monster");
-            _playerUI.LoadingScreenOff();
-            
+
             // Unload the previous Scene
             SceneManager.UnloadSceneAsync(currentScene);
+            
+            _playerUI.LoadingScreenOff();
         }
 
         public void TriggerTeleportBack()
@@ -514,10 +589,18 @@ namespace Characters.Playable.Scripts
             }
 
             // Teleport player to hub
-            HubTeleport();
+            if (SceneManager.GetActiveScene().buildIndex == 1)
+            {
+                HubTeleport();
+            }
+            else
+            {
+                HubTeleportNew();
+            }
             _playerUI.timer = 16;
             _playerDamage.currentHealth = 300;
             _playerDamage.maxHealth = 300;
+            _playerDamage.bandageCount = 5;
         }
         
         #endregion

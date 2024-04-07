@@ -38,12 +38,13 @@ namespace Characters.Playable.Scripts
         private float _essenceOffence; // to be added depending on the type of essence used
         public bool targetLocked;
         private bool _iFrames;
+        [SerializeField] private float shootForce;
 
 
         //gear stuff
         public GameObject[] weaponsList;
         public GameObject activeWeapon; //equipped weapon
-        public GameObject activeShield; //equipped weapon
+        public GameObject activeShield; //equipped shield
         private GameObject _previousActiveWeapon;
         public GameObject[] armoursList;
         public GameObject activeArmor; //equipped armor
@@ -55,13 +56,14 @@ namespace Characters.Playable.Scripts
         private string _equippedArmorName;
         private string _equippedEssenceName;
         public Transform weaponBone;
-        public Transform shieldBone;
         public GameObject weaponSlot;
         public GameObject armorSlot;
         public GameObject essenceSlot;
         public int bandageCount = 5;
         public Transform projectileSpawnLoc;
         public GameObject projectileObj;
+        private Vector3 _offsetWeapon;
+        private Quaternion _offsetWeaponRotation;
 
 
         public Image blindingImage;
@@ -78,11 +80,6 @@ namespace Characters.Playable.Scripts
         {
             _playerMovement = GetComponent<PlayerMovement>();
             currentHealth = maxHealth;
-            
-            //set gear
-            //AttachWeapon();
-            //AttachArmor();
-            //AttachEssence();
         }
 
         private void Start()
@@ -229,8 +226,8 @@ namespace Characters.Playable.Scripts
             return armorType switch
             {
                 IDamageStats.ArmorType.Naked => 2f,
-                IDamageStats.ArmorType.Light => 1.2f,
-                IDamageStats.ArmorType.Medium => 1.2f,
+                IDamageStats.ArmorType.Light => 1.1f,
+                IDamageStats.ArmorType.Medium => 1.1f,
                 IDamageStats.ArmorType.Heavy => 1.4f,
                 _ => 1f
             };
@@ -242,9 +239,9 @@ namespace Characters.Playable.Scripts
             return armorType switch
             {
                 IDamageStats.ArmorType.Naked => 0f + _essenceDefence,
-                IDamageStats.ArmorType.Light => 2f + _essenceDefence,
-                IDamageStats.ArmorType.Medium => 4f + _essenceDefence,
-                IDamageStats.ArmorType.Heavy => 6f + _essenceDefence,
+                IDamageStats.ArmorType.Light => 1f + _essenceDefence,
+                IDamageStats.ArmorType.Medium => 3f + _essenceDefence,
+                IDamageStats.ArmorType.Heavy => 5f + _essenceDefence,
                 _ => 0f
             };
         }
@@ -388,62 +385,67 @@ namespace Characters.Playable.Scripts
         //attach weapon to bone
         public void AttachWeapon()
         {
-            if (weaponsList != null && weaponBone != null && shieldBone != null)
+            if (weaponsList != null && weaponBone != null)
             {
                 //destroy previous prefab
                 if (weaponBone.childCount > 0)
                 {
                     Destroy(weaponBone.GetChild(0).gameObject);
+                    activeShield.SetActive(false);
                     _playerMovement.AimingCameraOff();
-                    
-                    if (shieldBone.childCount > 0)
-                    {
-                        Destroy(shieldBone.GetChild(0).gameObject);
-                    }
                 }
                 
                 // Instantiate the prefab and make the attachedPrefab a child of the bone.
                 if (weaponSlot.transform.childCount < 1)
                 {
                     activeWeapon = Instantiate(weaponsList[0], weaponBone, true);
-                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    activeShield.SetActive(false);
                     _playerMovement.AnimControllerChange(0);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "SwordIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[1], weaponBone, true);
-                    activeShield = Instantiate(weaponsList[2], shieldBone, true);
+                    activeShield.SetActive(true);
                     _playerMovement.AnimControllerChange(0);
+                    
+                    // Adjust the local position to raise the weapon in the hand.
+                    _offsetWeapon = new Vector3(0.2f, -0.4f, 0.1f);
+                    _offsetWeaponRotation = Quaternion.identity;
                 } 
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[3], weaponBone, true);
-                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    activeShield.SetActive(false);
                     _playerMovement.AnimControllerChange(1);
+                    
+                    // Adjust the local position to raise the weapon in the hand.
+                    _offsetWeapon = new Vector3(0.2f, 1.1f, 0.1f);
+                    _offsetWeaponRotation = Quaternion.identity;
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[4], weaponBone, true);
-                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    activeShield.SetActive(false);
                     _playerMovement.AnimControllerChange(2);
+                    
+                    // Adjust the local position to raise the weapon in the hand.
+                    _offsetWeapon = new Vector3(0.5f, 1.6f, 1.1f);
+                    _offsetWeaponRotation = Quaternion.Euler(35f, 0f, -9f);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[5], weaponBone, true);
-                    activeShield = Instantiate(weaponsList[6], shieldBone, true);
+                    activeShield.SetActive(false);
                     _playerMovement.AnimControllerChange(3);
                     _playerMovement.AimingCameraOn();
+                    
+                    // Adjust the local position to raise the weapon in the hand.
+                    _offsetWeapon = new Vector3(0.3f, 0.2f, 0.1f);
+                    _offsetWeaponRotation = Quaternion.Euler(0f, 0f, 30f);
                 }
                 
-                
-                // Adjust the local position to raise the weapon in the hand.
-                var offsetWeapon = new Vector3(0f, 1f, 0f);
-                var offsetShield = new Vector3(0f, 0.4f, 0.3f); 
-                activeWeapon.transform.localPosition = offsetWeapon;
-                activeShield.transform.localPosition = offsetShield;
-
-                // Reset the local rotation if needed.
-                activeWeapon.transform.localRotation = Quaternion.identity;
+                activeWeapon.transform.localPosition = _offsetWeapon;
+                activeWeapon.transform.localRotation = _offsetWeaponRotation;
             }
             else
             {
@@ -511,13 +513,10 @@ namespace Characters.Playable.Scripts
             conditionType = IDamageStats.ConditionType.None;
             skillModifier = _equippedWeaponName switch
             {
-                "Sword(Clone)" => 4f,
-                "Spear(Clone)" => 3f,
+                "Sword(Clone)" => 5f,
+                "Spear(Clone)" => 4f,
                 "Hammer(Clone)" => 6f,
-                "GreatSword(Clone)" => 5f,
-                "Daggers(Clone)" => 2f,
-                "Crossbow(Clone)" => 3f,
-                "Bow(Clone)" => 2f,
+                "Crossbow(Clone)" => 2f,
                 _ => skillModifier
             };
         }
@@ -548,31 +547,10 @@ namespace Characters.Playable.Scripts
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Stagger;
                     break;
-                case "GreatSword(Clone)":
-                    skillModifier = 4f;
-                    hasCondition = true;
-                    conditionDamage = 5;
-                    conditionTime = 5;
-                    conditionType = IDamageStats.ConditionType.Bleed;
-                    break;
-                case "Daggers(Clone)":
-                    skillModifier = 3f;
-                    hasCondition = true;
-                    conditionDamage = 3;
-                    conditionTime = 5;
-                    conditionType = IDamageStats.ConditionType.Bleed;
-                    break;
                 case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 5;
-                    conditionTime = 5;
-                    conditionType = IDamageStats.ConditionType.Bleed;
-                    break;
-                case "Bow(Clone)":
-                    skillModifier = 3f;
-                    hasCondition = true;
-                    conditionDamage = 2;
                     conditionTime = 5;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
@@ -585,7 +563,7 @@ namespace Characters.Playable.Scripts
             switch (_equippedWeaponName)
             {
                 case "Sword(Clone)":
-                    skillModifier = 3f;
+                    skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
@@ -605,18 +583,6 @@ namespace Characters.Playable.Scripts
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "GreatSword(Clone)":
-                    skillModifier = 3f;
-                    hasCondition = true;
-                    conditionDamage = 0;
-                    conditionTime = 0;
-                    conditionType = IDamageStats.ConditionType.Stagger;
-                    break;
-                case "Daggers(Clone)":
-                    skillModifier = 5f;
-                    hasCondition = false;
-                    conditionType = IDamageStats.ConditionType.None;
-                    break;
                 case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
@@ -624,15 +590,9 @@ namespace Characters.Playable.Scripts
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "Bow(Clone)":
-                    skillModifier = 5f;
-                    hasCondition = false;
-                    conditionType = IDamageStats.ConditionType.None;
-                    break;
             }
         }
-
-        [SerializeField] private float shootForce;
+        
         public void SpawnProjectile()
         {
             var projectile = Instantiate(projectileObj, projectileSpawnLoc.position, _playerMovement.aimingCamera.transform.rotation);
@@ -694,6 +654,9 @@ namespace Characters.Playable.Scripts
             // Calculate and apply the damage.
             CalculateTotalDamageReceived(damageScript.baseDamage + damageScript.skillModifier,
                 damageScript.damageType);
+            
+            //play hit anim
+            _playerMovement.PlayerHit();
 
             //if the skill used by enemy has a condition add it and make it false
             if (!damageScript.hasCondition) return;
