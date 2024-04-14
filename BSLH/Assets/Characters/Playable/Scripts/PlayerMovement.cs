@@ -484,6 +484,11 @@ namespace Characters.Playable.Scripts
             Debug.Log("player got hit");
         }
 
+        public void PlayerWin()
+        {
+            _animator.SetTrigger(Win);
+        }
+
         public IEnumerator FallBack()
         {
             Debug.Log("pushed back");
@@ -505,6 +510,7 @@ namespace Characters.Playable.Scripts
         #region Teleport
         private string _sceneToBeLoaded;
         private Vector3 _locationToBeTeleported;
+        private static readonly int Win = Animator.StringToHash("Win");
 
         private void HubTeleport()
         {
@@ -574,12 +580,12 @@ namespace Characters.Playable.Scripts
         {
             StartCoroutine(TeleportBack());
         }
-        
+
         private IEnumerator TeleportBack()
         {
             var elapsedTime = 0f;
 
-            while (elapsedTime < 15f)
+            while (elapsedTime < 30f)
             {
                 _playerUI.timer -= 1;
                 
@@ -597,7 +603,7 @@ namespace Characters.Playable.Scripts
             {
                 HubTeleportNew();
             }
-            _playerUI.timer = 16;
+            _playerUI.timer = 30;
             _playerDamage.currentHealth = 300;
             _playerDamage.maxHealth = 300;
             _playerDamage.bandageCount = 5;

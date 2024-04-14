@@ -18,7 +18,7 @@ namespace Characters.Playable.Scripts
     public class PlayerDamage : MonoBehaviour, IDamageStats
     {
         private PlayerMovement _playerMovement;
-        
+
         //health
         public float maxHealth = 100f;
         public float currentHealth;
@@ -410,17 +410,17 @@ namespace Characters.Playable.Scripts
                     
                     // Adjust the local position to raise the weapon in the hand.
                     _offsetWeapon = new Vector3(0.2f, -0.4f, 0.1f);
-                    _offsetWeaponRotation = Quaternion.identity;
+                    _offsetWeaponRotation = Quaternion.Euler(10f, -115f, 0f);
                 } 
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "SpearIcon(Clone)")
                 {
                     activeWeapon = Instantiate(weaponsList[3], weaponBone, true);
                     activeShield.SetActive(false);
                     _playerMovement.AnimControllerChange(1);
-                    
+
                     // Adjust the local position to raise the weapon in the hand.
-                    _offsetWeapon = new Vector3(0.2f, 1.1f, 0.1f);
-                    _offsetWeaponRotation = Quaternion.identity;
+                    _offsetWeapon = new Vector3(0.4f, 0.5f, 0f);
+                    _offsetWeaponRotation = Quaternion.Euler(-17f, -10f, -35f);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "HammerIcon(Clone)")
                 {
@@ -429,8 +429,8 @@ namespace Characters.Playable.Scripts
                     _playerMovement.AnimControllerChange(2);
                     
                     // Adjust the local position to raise the weapon in the hand.
-                    _offsetWeapon = new Vector3(0.5f, 1.6f, 1.1f);
-                    _offsetWeaponRotation = Quaternion.Euler(35f, 0f, -9f);
+                    _offsetWeapon = new Vector3(0.9f, 1.4f, -0.3f);
+                    _offsetWeaponRotation = Quaternion.Euler(-21f, 0.2f, -27f);
                 }
                 else if (weaponSlot.transform.GetChild(0).gameObject.name == "CrossbowIcon(Clone)")
                 {
@@ -440,8 +440,8 @@ namespace Characters.Playable.Scripts
                     _playerMovement.AimingCameraOn();
                     
                     // Adjust the local position to raise the weapon in the hand.
-                    _offsetWeapon = new Vector3(0.3f, 0.2f, 0.1f);
-                    _offsetWeaponRotation = Quaternion.Euler(0f, 0f, 30f);
+                    _offsetWeapon = new Vector3(0.2f, 0.2f, 0.1f);
+                    _offsetWeaponRotation = Quaternion.Euler(-11f, -34f, 14f);
                 }
                 
                 activeWeapon.transform.localPosition = _offsetWeapon;
@@ -516,7 +516,7 @@ namespace Characters.Playable.Scripts
                 "Sword(Clone)" => 5f,
                 "Spear(Clone)" => 4f,
                 "Hammer(Clone)" => 6f,
-                "Crossbow(Clone)" => 2f,
+                "Crossbow(Clone)" => 4f,
                 _ => skillModifier
             };
         }
@@ -541,7 +541,7 @@ namespace Characters.Playable.Scripts
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
                 case "Hammer(Clone)":
-                    skillModifier = 4f;
+                    skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
@@ -550,9 +550,9 @@ namespace Characters.Playable.Scripts
                 case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
-                    conditionDamage = 5;
-                    conditionTime = 5;
-                    conditionType = IDamageStats.ConditionType.Bleed;
+                    conditionDamage = 0;
+                    conditionTime = 0;
+                    conditionType = IDamageStats.ConditionType.Stagger;
                     break;
             }
         }
@@ -586,9 +586,9 @@ namespace Characters.Playable.Scripts
                 case "Crossbow(Clone)":
                     skillModifier = 5f;
                     hasCondition = true;
-                    conditionDamage = 0;
-                    conditionTime = 0;
-                    conditionType = IDamageStats.ConditionType.PushBack;
+                    conditionDamage = 3;
+                    conditionTime = 5;
+                    conditionType = IDamageStats.ConditionType.Bleed;
                     break;
             }
         }

@@ -81,7 +81,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8c0b4b7ea689e9748b2f3e1310dbc687,
         type: 3}
       propertyPath: m_Name
-      value: BrokenHouse (2)
+      value: BrokenHouse - Stone Slate
       objectReference: {fileID: 0}
     - target: {fileID: 1817421672086786307, guid: 8c0b4b7ea689e9748b2f3e1310dbc687,
         type: 3}
@@ -259,5 +259,37 @@ PrefabInstance:
     - {fileID: 6727007405964328823, guid: 8c0b4b7ea689e9748b2f3e1310dbc687, type: 3}
     - {fileID: 2866621852552652557, guid: 8c0b4b7ea689e9748b2f3e1310dbc687, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9109932052991840484, guid: 8c0b4b7ea689e9748b2f3e1310dbc687,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3114676106346344571}
   m_SourcePrefab: {fileID: 100100000, guid: 8c0b4b7ea689e9748b2f3e1310dbc687, type: 3}
+--- !u!1 &8648421526761062462 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9109932052991840484, guid: 8c0b4b7ea689e9748b2f3e1310dbc687,
+    type: 3}
+  m_PrefabInstance: {fileID: 462084472388014298}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &3114676106346344571
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8648421526761062462}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8224231577442102649, guid: 8c0b4b7ea689e9748b2f3e1310dbc687, type: 3}

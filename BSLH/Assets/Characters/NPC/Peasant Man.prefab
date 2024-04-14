@@ -75,6 +75,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b422feffeb5f87345b47f4d4f0b3648c,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4382764163584655754}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b422feffeb5f87345b47f4d4f0b3648c,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8282927532076262749}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b422feffeb5f87345b47f4d4f0b3648c,
         type: 3}
@@ -87,6 +91,102 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8620472477247173397}
   m_PrefabAsset: {fileID: 0}
+--- !u!82 &4382764163584655754
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8891086268248903236}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &8282927532076262749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,8 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7ddc5f2932aece438b76b4fb74b483c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMovement: {fileID: 7633540697661795600, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-    type: 3}
+  playerMovement: {fileID: 0}
   tractorScript: {fileID: 0}
   speed: 0.6
   getUpActive: 1
@@ -112,6 +211,17 @@ MonoBehaviour:
   itemsLocation: {fileID: 0}
   hideLocation: {fileID: 0}
   caveLocation: {fileID: 0}
+  npcVoice:
+  - {fileID: 8300000, guid: 54a819de3e39d1e409a8f0d325be6ade, type: 3}
+  - {fileID: 8300000, guid: de8d8f0daff66214c9334a58f293ec08, type: 3}
+  - {fileID: 8300000, guid: 0a2d121efe6d8e14ba0f1a062cea5ad2, type: 3}
+  - {fileID: 8300000, guid: d40d3b88127b3584eae8e174be32b0a0, type: 3}
+  - {fileID: 8300000, guid: 83f0a1cc90251c049abaa658209b76bb, type: 3}
+  - {fileID: 8300000, guid: ce5b3fe1ebd0399428530b425cbac525, type: 3}
+  - {fileID: 8300000, guid: 99ba2b3d5640dd24e83ea5c7aac114ee, type: 3}
+  - {fileID: 8300000, guid: 9e718287fa219114d89c529c9c0a20df, type: 3}
+  - {fileID: 8300000, guid: ed888fdf4d18ef545980416e993ade6f, type: 3}
+  - {fileID: 8300000, guid: 7421bc34dd3e1544f9b6d4f8d3e39109, type: 3}
 --- !u!65 &89190022544130452
 BoxCollider:
   m_ObjectHideFlags: 0

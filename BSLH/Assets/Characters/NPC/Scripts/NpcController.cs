@@ -27,6 +27,9 @@ namespace Characters.NPC.Scripts
         public Transform hideLocation;
         public Transform caveLocation;
 
+        private AudioSource _audioSource;
+        public AudioClip[] npcVoice;
+
         //anim cache
         private static readonly int GetUp = Animator.StringToHash("GetUp");
         private static readonly int Movement = Animator.StringToHash("Movement");
@@ -43,6 +46,7 @@ namespace Characters.NPC.Scripts
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            _audioSource = GetComponent<AudioSource>();
         }
 
         private void Start()
@@ -65,50 +69,66 @@ namespace Characters.NPC.Scripts
 
         //play anims
         #region PlayAnims
+        public void StartEnding()
+        {
+            StartCoroutine(Ending());
+        }
+        
         private void PlayGetUp()
         {
             _animator.SetTrigger(GetUp);
+            _audioSource.clip = npcVoice[0];
+            _audioSource.Play();
         }
-
         private void PlayTutorial1()
         {
             _animator.SetTrigger(Tutorial1);
+            _audioSource.clip = npcVoice[1];
+            _audioSource.Play();
+        }
+        private void PlayPickUp()
+        {
+            _animator.SetTrigger(PickUp);
+            _audioSource.clip = npcVoice[2];
+            _audioSource.Play();
         }
         private void PlayTutorial2()
         {
             _animator.SetTrigger(Tutorial2);
+            _audioSource.clip = npcVoice[3];
+            _audioSource.Play();
         }
-
-        private void PlayPickUp()
-        {
-            _animator.SetTrigger(PickUp);
-        }
-
         private void PlayPoint()
         {
             _animator.SetTrigger(Point);
+            _audioSource.clip = npcVoice[4];
+            _audioSource.Play();
         }
-
         private void PlayEnding()
         {
             _animator.SetTrigger(Fallow);
-        }
-
-        private void PlayBlacksmith()
-        {
-            _animator.SetTrigger(Blacksmith);
-        }
-
-        private void PlayMap()
-        {
-            _animator.SetTrigger(Map);
+            _audioSource.clip = npcVoice[5];
+            _audioSource.Play();
         }
 
         private void PlayWave()
         {
             _animator.SetBool(Wave, true);
+            _audioSource.clip = npcVoice[6];
+            _audioSource.Play();
         }
-
+        private void PlayBlacksmith()
+        {
+            _animator.SetTrigger(Blacksmith);
+            _audioSource.clip = npcVoice[7];
+            _audioSource.Play();
+        }
+        private void PlayMap()
+        {
+            _animator.SetTrigger(Map);
+            _audioSource.clip = npcVoice[8];
+            _audioSource.Play();
+        }
         private void PlaySit()
         {
             _animator.SetBool(Sitting, true);
@@ -120,10 +140,10 @@ namespace Characters.NPC.Scripts
             if (!other.CompareTag("Player")) return;
 
             _playerInRange = true;
-            if (sittingActive)
-            {
-                //play sound get out of here
-            }
+            
+            if (!sittingActive) return;
+            _audioSource.clip = npcVoice[9];
+            _audioSource.Play();
         }
 
         private void OnTriggerExit(Collider other)
@@ -139,7 +159,7 @@ namespace Characters.NPC.Scripts
             {
                 PlayWave();
 
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(5f);
             }
             wavingActive = false;
             _animator.SetBool(Wave, false);
@@ -324,11 +344,7 @@ namespace Characters.NPC.Scripts
             sittingActive = true;
             PlaySit();
         }
-
-        public void StartEnding()
-        {
-            StartCoroutine(Ending());
-        }
+        
         private IEnumerator Ending()
         {
             //start moving to player

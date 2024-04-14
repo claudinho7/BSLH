@@ -54,7 +54,7 @@ namespace Characters.Playable.Scripts
             map.SetActive(false);
             interact.SetActive(false);
             pauseMenu.SetActive(false);
-            timer = 16;
+            timer = 30;
         }
 
         private void Update()
@@ -65,7 +65,7 @@ namespace Characters.Playable.Scripts
 
             bandageTextObj.GetComponent<TextMeshProUGUI>().text = _playerDamage.bandageCount.ToString("0");
 
-            if (timer is < 16 and > 0)
+            if (timer is < 30 and > 0)
             {
                 timerObj.SetActive(true);
                 timerObj.GetComponent<TextMeshProUGUI>().text = timer.ToString("0");
@@ -190,6 +190,7 @@ namespace Characters.Playable.Scripts
         {
             if (!_canShowUI) return;
             craftingUI.SetActive(true);
+            skillBar.SetActive(false);
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
             Time.timeScale = 0;
@@ -199,6 +200,7 @@ namespace Characters.Playable.Scripts
         public void CloseCrafting()
         {
             craftingUI.SetActive(false);
+            skillBar.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
             Time.timeScale = 1;

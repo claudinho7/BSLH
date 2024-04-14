@@ -271,14 +271,14 @@ namespace Characters.Monsters.Scripts
                 case "Gorgon": //bow shot
                     skillModifier = 1f;
                     hasCondition = false;
-                    conditionType = IDamageStats.ConditionType.None;
+                    conditionType = IDamageStats.ConditionType.Bleed;
                     break;
                 case "Gargoyle": //throw
-                    skillModifier = 1f;
+                    skillModifier = 2f;
                     hasCondition = false;
-                    conditionType = IDamageStats.ConditionType.None;
+                    conditionType = IDamageStats.ConditionType.PushBack;
                     break;
-                case "Satyr": //headbutt
+                case "Satyr": //magic shot
                     skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 15;
@@ -286,9 +286,6 @@ namespace Characters.Monsters.Scripts
                     conditionType = IDamageStats.ConditionType.Decay;
                     break;
             }
-            //spawn projectile
-            var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
-            newProjectile.transform.position = projectileSpawner.transform.position;
         }
 
         public void DoSpecialMeleeAttack()
@@ -316,7 +313,7 @@ namespace Characters.Monsters.Scripts
                         currentHealth = maxHealth;
                     }
                     break;
-                case "Satyr": //shield bash
+                case "Satyr": //antler hit
                     skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 0;
@@ -352,11 +349,6 @@ namespace Characters.Monsters.Scripts
                     conditionDamage = 5;
                     conditionTime = 0;
                     conditionType = IDamageStats.ConditionType.Decay;
-                    
-                    //spawn projectile
-                    var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
-                    newProjectile.transform.position = projectileSpawner.transform.position;
-                    
                     break;
             }
         }
@@ -389,6 +381,12 @@ namespace Characters.Monsters.Scripts
                     Instantiate(vfxObj, transform);
                     break;
             }
+        }
+
+        private void SpawnProjectile()
+        {
+            var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
+            newProjectile.transform.position = projectileSpawner.transform.position;
         }
         #endregion
         
@@ -442,10 +440,13 @@ namespace Characters.Monsters.Scripts
                 if (SceneManager.GetActiveScene().buildIndex == 1)
                 {
                     GameObject.Find("Peasant Man").GetComponent<NpcController>().StartEnding();
+                    GameObject.Find("Player").GetComponent<PlayerMovement>().PlayerWin();
                 }
                 else
                 {
-                    GameObject.Find("Player").GetComponent<PlayerMovement>().TriggerTeleportBack();
+                    var player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+                    player.PlayerWin();
+                    player.TriggerTeleportBack();
                 }
                 
                 // Wait for the tick interval.
