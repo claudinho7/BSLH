@@ -182,8 +182,7 @@ namespace Characters.Playable.Scripts
                     transform1.eulerAngles = new Vector3(transform1.eulerAngles.x, xAxis.Value, transform1.localEulerAngles.z);
 
                     _playerRotation = Quaternion.Euler(0f, transform1.eulerAngles.y, 0f); 
-                     transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation,
-                    Time.deltaTime * rotationSpeed);
+                     transform.rotation = Quaternion.Lerp(transform.rotation, _playerRotation, rotationSpeed * Time.deltaTime);
                 }
                 else
                 {

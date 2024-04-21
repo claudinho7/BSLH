@@ -10,6 +10,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
         private AIBrain AIBrain { get; set; }
         public Action[] actionsAvailable;
 
+        [Header("References")]
         private Animator _animator;
         public MonsterDamage damage;
         public MonsterUI monsterUI;
@@ -17,10 +18,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private bool _playerFound;
 
-        //animations
-        //public bool animationStarted;
-        //public bool animationEnded;
-        
+        [Header("Counters")]
         //action counters
         public int actionCounterNormalMelee;
         public int actionCounterNormalRanged;
@@ -37,6 +35,10 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private void Awake()
         {
+            Movement = GetComponent<AIMovement>();
+            AIBrain = GetComponent<AIBrain>();
+            _animator = GetComponent<Animator>();
+            
             // Check if _playerDamage is still null and the player is not yet found.
             if (playerDamage == null && !_playerFound)
             {
@@ -53,23 +55,18 @@ namespace Characters.Monsters.Scripts.UtilityCore
 
         private void Start()
         {
-            Movement = GetComponent<AIMovement>();
-            AIBrain = GetComponent<AIBrain>();
-            _animator = GetComponent<Animator>();
-
             canDoUltimate = true;
         }
 
         private void Update()
         {
             //if player not seen and is patrolling or if AI is dead -> break
-            if (playerDamage != null  && !(playerDamage.currentHealth <= 0f) && (!Movement.isPatrolling || !(damage.currentHealth > 0f)))
-            {
-                if (!AIBrain.FinishedDeciding) return;
-                AIBrain.FinishedDeciding = false;
-                AIBrain.BestAction.Execute(this);
-                ActionCounter(AIBrain.BestAction.actionName);
-            }
+            if (damage.currentHealth <= 0) return;
+            if (playerDamage == null || playerDamage.currentHealth <= 0f || Movement.isPatrolling) return;
+            if (!AIBrain.FinishedDeciding) return;
+            AIBrain.FinishedDeciding = false;
+            AIBrain.BestAction.Execute(this);
+            ActionCounter(AIBrain.BestAction.actionName);
         }
 
         private void LateUpdate()
@@ -174,7 +171,7 @@ namespace Characters.Monsters.Scripts.UtilityCore
             StartCoroutine(UltimateCooldown());
         }
         #endregion
-        
+
         private void ActionCounter(string actionName)
         {
             switch (actionName)

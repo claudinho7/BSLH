@@ -648,7 +648,7 @@ namespace Characters.Playable.Scripts
             if (_iFrames) return;
 
             // Access the damage script on the colliding object parent.
-            var damageScript = other.gameObject.GetComponentInParent<MonsterDamage>();
+            var damageScript = GameObject.FindGameObjectWithTag("Monster").GetComponent<MonsterDamage>();
 
             if (damageScript == null) return;
             // Calculate and apply the damage.

@@ -6736,7 +6736,8 @@ PrefabInstance:
         type: 3}
       propertyPath: playerMovement
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7633540697661795600, guid: d40b1840eeade5a4fb56c8358e8ff07d,
+        type: 3}
     - target: {fileID: 8891086268248903236, guid: 0d5129053e745c646a5cdb73d7880cfc,
         type: 3}
       propertyPath: m_Name

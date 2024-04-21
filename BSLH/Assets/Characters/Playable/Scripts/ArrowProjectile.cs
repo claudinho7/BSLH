@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,13 @@ namespace Characters.Playable.Scripts
     public class ArrowProjectile : MonoBehaviour
     {
         public GameObject hitVFX;
+        [SerializeField] private AudioClip hitSound;
+        private AudioSource _audioSource;
+
+        private void Awake()
+        {
+            _audioSource = GetComponent<AudioSource>();
+        }
 
         private void Start()
         {
@@ -16,6 +24,8 @@ namespace Characters.Playable.Scripts
         {
             var newVfx = Instantiate(hitVFX, transform.parent);
             newVfx.transform.position = transform.position;
+            
+            _audioSource.PlayOneShot(hitSound);
                 
             Destroy(gameObject);
         }

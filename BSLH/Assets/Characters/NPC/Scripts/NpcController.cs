@@ -8,6 +8,7 @@ namespace Characters.NPC.Scripts
 {
     public class NpcController : MonoBehaviour
     {
+        // References to other components and objects
         private Animator _animator;
         public PlayerMovement playerMovement;
         public TractorScript tractorScript;
@@ -15,10 +16,12 @@ namespace Characters.NPC.Scripts
         public float speed;
         private bool _playerInRange;
 
+        // Flags to control NPC behavior
         public bool getUpActive;
         public bool wavingActive;
         public bool sittingActive;
 
+        // Locations for NPC movement
         private Transform _playerLocation;
         public Transform chairLocation;
         public Transform mapLocation;
@@ -45,12 +48,14 @@ namespace Characters.NPC.Scripts
 
         private void Awake()
         {
+            // Initialize references
             _animator = GetComponent<Animator>();
             _audioSource = GetComponent<AudioSource>();
         }
 
         private void Start()
         {
+            // Start NPC behavior based on flags
             if (sittingActive)
             {
                 PlaySit();
@@ -64,7 +69,7 @@ namespace Characters.NPC.Scripts
                 StartCoroutine(StartTutorial());
             }
             
-            _playerLocation = playerMovement.transform;
+            _playerLocation = playerMovement.transform; // Cache player's location
         }
 
         //play anims

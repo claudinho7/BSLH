@@ -8,8 +8,13 @@ namespace Characters.Playable.Scripts
 {
     public class PlayerUI : MonoBehaviour
     {
+        // References to other components
         private PlayerDamage _playerDamage;
         private PlayerMovement _playerMovement;
+        private AudioSource _audioSource;
+        [SerializeField] private AudioClip[] sounds;
+        
+        // UI elements
         public Image currentHealthBar;
         public Image maxHealthBar;
         public Image currentStaminaBar;
@@ -24,9 +29,11 @@ namespace Characters.Playable.Scripts
         public GameObject craftingUI;
         public GameObject timerObj;
         
+        // Flags and variables
         private bool _canShowUI;
         public int timer;
 
+        // Skill bar elements
         [Header("Skill Bar")] 
         public GameObject skillBar;
         public Button normalAttBtn;
@@ -45,12 +52,18 @@ namespace Characters.Playable.Scripts
         public string[] skill1Names;
         public string[] skill2Names;
 
-        private void Start()
+        private void Awake()
         {
+            // Initialize references
             _playerDamage = GetComponent<PlayerDamage>();
             _playerMovement = GetComponent<PlayerMovement>();
+            _audioSource = GetComponent<AudioSource>();
+        }
+
+        private void Start()
+        {
+            // Initialize UI state
             _canShowUI = true;
-            
             map.SetActive(false);
             interact.SetActive(false);
             pauseMenu.SetActive(false);
@@ -59,6 +72,7 @@ namespace Characters.Playable.Scripts
 
         private void Update()
         {
+            // Update health, stamina, and timer UI elements
             maxHealthBar.fillAmount = _playerDamage.maxHealth / 300f;
             currentHealthBar.fillAmount = _playerDamage.currentHealth / 300f;
             currentStaminaBar.fillAmount = _playerMovement.stamina / 100f;
@@ -76,31 +90,34 @@ namespace Characters.Playable.Scripts
             }
         }
         
-        
+        // Methods to show and hide interact UI
         public void ShowInteract()
         {
             interact.SetActive(true);
         }
-
         public void HideInteract()
         {
             interact.SetActive(false);
         }
 
+        // Methods to open and close map UI
         public void OpenMap()
         {
             if (!_canShowUI) return;
             map.SetActive(true);
+            _audioSource.PlayOneShot(sounds[0]);
+            _audioSource.volume = 1f;
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
             skillBar.SetActive(false);
             Time.timeScale = 0;
             _playerMovement.canExecute = false;
         }
-        
         public void CloseMap()
         {
             map.SetActive(false);
+            _audioSource.PlayOneShot(sounds[0]);
+            _audioSource.volume = 0.2f;
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
             skillBar.SetActive(true);
@@ -108,20 +125,24 @@ namespace Characters.Playable.Scripts
             _playerMovement.canExecute = true;
         }
 
+        // Methods to open and close inventory UI
         public void OpenInventory()
         {
             if (!_canShowUI) return;
             Cursor.lockState = CursorLockMode.None;
             inventory.SetActive(true);
+            _audioSource.PlayOneShot(sounds[1]);
+            _audioSource.volume = 1f;
             skillBar.SetActive(false);
             _canShowUI = false;
             Time.timeScale = 0;
             _playerMovement.canExecute = false;
         }
-
         public void CloseInventory()
         {
             inventory.SetActive(false);
+            _audioSource.PlayOneShot(sounds[1]);
+            _audioSource.volume = 0.2f;
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;
             skillBar.SetActive(true);
@@ -190,6 +211,8 @@ namespace Characters.Playable.Scripts
         {
             if (!_canShowUI) return;
             craftingUI.SetActive(true);
+            _audioSource.PlayOneShot(sounds[2]);
+            _audioSource.volume = 1f;
             skillBar.SetActive(false);
             Cursor.lockState = CursorLockMode.None;
             _canShowUI = false;
@@ -200,6 +223,8 @@ namespace Characters.Playable.Scripts
         public void CloseCrafting()
         {
             craftingUI.SetActive(false);
+            _audioSource.PlayOneShot(sounds[2]);
+            _audioSource.volume = 0.2f;
             skillBar.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             _canShowUI = true;

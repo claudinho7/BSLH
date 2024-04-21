@@ -16,12 +16,10 @@ namespace Characters.Monsters.Scripts
         private AIController _aiController;
         [SerializeField] private List<GameObject> droppedLoot;
 
-        //health
+        //stats
+        [Header("Stats")]
         public float maxHealth = 100;
         public float currentHealth;
-        private float _totalDamageTaken;
-
-        //stats
         public IDamageStats.DamageType damageType; //this condition type
         public IDamageStats.ArmorType armorType; //this condition type
         public IDamageStats.ConditionType conditionType; //this condition type
@@ -30,11 +28,14 @@ namespace Characters.Monsters.Scripts
         public float conditionTime; //damage over time duration
         public bool hasCondition; //check if damage over time is applied
         public float skillModifier = 1f; // to be added depending on the type of skill used
+        private float _totalDamageTaken;
         
-        private string _monsterName;
+        [Header("Extras")]
         public GameObject projectile;
+        public GameObject projectile2;
         public GameObject projectileSpawner;
         public GameObject vfxObj;
+        private string _monsterName;
         
         //animation cache
         private Animator _animator;
@@ -43,10 +44,11 @@ namespace Characters.Monsters.Scripts
         private void Awake()
         {
             _aiController = GetComponent<AIController>();
-            currentHealth = maxHealth;
-            _monsterName = gameObject.name;
             conditionType = IDamageStats.ConditionType.None; //set condition to none
             _animator = GetComponent<Animator>();
+
+            currentHealth = maxHealth;
+            _monsterName = gameObject.name;
         }
 
         private void TakeDamage(float damage)
@@ -269,7 +271,7 @@ namespace Characters.Monsters.Scripts
             switch (_monsterName)
             {
                 case "Gorgon": //bow shot
-                    skillModifier = 1f;
+                    skillModifier = 2f;
                     hasCondition = false;
                     conditionType = IDamageStats.ConditionType.Bleed;
                     break;
@@ -279,7 +281,7 @@ namespace Characters.Monsters.Scripts
                     conditionType = IDamageStats.ConditionType.PushBack;
                     break;
                 case "Satyr": //magic shot
-                    skillModifier = 4f;
+                    skillModifier = 3f;
                     hasCondition = true;
                     conditionDamage = 15;
                     conditionTime = 0;
@@ -294,11 +296,11 @@ namespace Characters.Monsters.Scripts
             switch (_monsterName)
             {
                 case "Gorgon": //tail swipe
-                    skillModifier = 3f;
+                    skillModifier = 5f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 3;
-                    conditionType = IDamageStats.ConditionType.Stagger;
+                    conditionType = IDamageStats.ConditionType.PushBack;
                     break;
                 case "Gargoyle": //bite
                     skillModifier = 4f;
@@ -314,7 +316,7 @@ namespace Characters.Monsters.Scripts
                     }
                     break;
                 case "Satyr": //antler hit
-                    skillModifier = 3f;
+                    skillModifier = 4f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 0;
@@ -328,8 +330,8 @@ namespace Characters.Monsters.Scripts
             //modifiers change depending on monster type
             switch (_monsterName)
             {
-                case "Gorgon": //poison spit
-                    skillModifier = 3f;
+                case "Gorgon": //rapid shot
+                    skillModifier = 2f;
                     hasCondition = true;
                     conditionDamage = 5;
                     conditionTime = 5;
@@ -359,7 +361,7 @@ namespace Characters.Monsters.Scripts
             switch (_monsterName)
             {
                 case "Gorgon": //blinding shot
-                    skillModifier = 5f;
+                    skillModifier = 8f;
                     hasCondition = true;
                     conditionDamage = 0;
                     conditionTime = 3;
@@ -383,13 +385,19 @@ namespace Characters.Monsters.Scripts
             }
         }
 
-        private void SpawnProjectile()
+        public void SpawnProjectile()
         {
             var newProjectile = Instantiate(projectile, projectileSpawner.transform, true);
             newProjectile.transform.position = projectileSpawner.transform.position;
         }
+
+        public void SpawnAoe()
+        {
+            var newProjectile = Instantiate(projectile2, projectileSpawner.transform, true);
+            newProjectile.transform.SetParent(null);
+        }
         #endregion
-        
+
         private void OnTriggerEnter(Collider other)
         {
             // Check if the collision is with a player weapon.
@@ -412,7 +420,7 @@ namespace Characters.Monsters.Scripts
             var elapsedTime = 0f;
             const float delayBetweenSpawns = 0.3f;
 
-            while (elapsedTime < 5f)
+            while (elapsedTime < 15f)
             {
                 foreach (var loot in droppedLoot)
                 {
@@ -450,13 +458,12 @@ namespace Characters.Monsters.Scripts
                 }
                 
                 // Wait for the tick interval.
-                yield return new WaitForSeconds(5f);
-                elapsedTime += 5f;
+                yield return new WaitForSeconds(15f);
+                elapsedTime += 15f;
                 yield return new WaitForSeconds(1f);
             }
             // Destroy the gameObject after all spawns are done
             Destroy(gameObject);
         }
-
     }
 }

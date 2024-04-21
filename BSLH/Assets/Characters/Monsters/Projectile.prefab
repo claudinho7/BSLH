@@ -118,5 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6d9045721ca054dbf0a50ad6884c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAoe: 0
   splashVFX: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8,
     type: 3}
+  hitSound: {fileID: 8300000, guid: 31af1061dd6ff6a41aa41870c56eb478, type: 3}

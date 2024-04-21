@@ -5,27 +5,51 @@ namespace Characters.Monsters.Scripts
 {
     public class EnemyProjectile : MonoBehaviour
     {
+        public bool isAoe;
         private Vector3 _target;
         public GameObject splashVFX;
+        [SerializeField] private AudioClip hitSound;
+        private AudioSource _audioSource;
+
+        private void Awake()
+        {
+            _audioSource = GetComponent<AudioSource>();
+        }
+
         private void Start()
         {
             var objects = GameObject.FindGameObjectWithTag("Player");
             _target = objects.transform.position + new Vector3(0, 1, 0);
 
-            StartCoroutine(LifeTime());
+            if (!isAoe)
+            {
+                StartCoroutine(LifeTime());
+            }
+            else
+            {
+                transform.position = objects.transform.position;
+            }
         }
 
         private void Update()
         {
-            transform.position = Vector3.MoveTowards(transform.position, _target, 20 * Time.deltaTime);
+            if (!isAoe)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, _target, 20 * Time.deltaTime);
+            }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            var newVfx = Instantiate(splashVFX, transform.parent);
-            newVfx.transform.position = transform.position;
+            if (!isAoe)
+            {
+                var newVfx = Instantiate(splashVFX, transform.parent);
+                newVfx.transform.position = transform.position;
                 
-            Destroy(gameObject);
+                _audioSource.PlayOneShot(hitSound);
+                
+                Destroy(gameObject);
+            }
         }
 
         private IEnumerator LifeTime()
