@@ -9166,41 +9166,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1126507557523324890, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: bones
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1126507557523324890, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: leathers
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1698023221632114697, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: m_text
-      value: Satyr Arena
-      objectReference: {fileID: 0}
-    - target: {fileID: 1708778203274978540, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2994000612144582241, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: m_text
-      value: Gorgon Arena
-      objectReference: {fileID: 0}
-    - target: {fileID: 4825593831350893863, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: m_text
-      value: Gargoyle Arena
-      objectReference: {fileID: 0}
-    - target: {fileID: 6529488468772423074, guid: d40b1840eeade5a4fb56c8358e8ff07d,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: e9d069a35c5e98c479c5088c41e26014, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
